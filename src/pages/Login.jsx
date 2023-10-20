@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const URL = "http://127.0.0.1:8000/users/handel_login";
+const URL = "http://127.0.0.1:8000/handel_login";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -12,8 +12,8 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    // send username and password to the backend and get reponse 
+    const res = await axios.get(URL);
+    console.log(res);
   };
 
   return (
@@ -56,7 +56,7 @@ export default function Login() {
                       <br />
                       <br />
                       <br />
-                      <button className="btn btn-primary btn-user btn-block">
+                      <button className="btn btn-warning btn-user btn-block">
                         Login
                       </button>
                     </form>

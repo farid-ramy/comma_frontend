@@ -1,11 +1,12 @@
 import React from "react";
+import { Link, Outlet } from "react-router-dom";
 
 export default function AdminNavbar() {
   return (
     <>
       <div id="wrapper">
         <ul
-          className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+          className="navbar-nav bg-gradient-warning sidebar sidebar-dark accordion"
           id="accordionSidebar"
         >
           <div className="sidebar-brand d-flex align-items-center justify-content-center">
@@ -15,10 +16,10 @@ export default function AdminNavbar() {
           <hr className="sidebar-divider my-0" />
 
           <li className="nav-item">
-            <a className="nav-link" href="">
+            <Link className="nav-link" to="/admin/dashboard">
               <i className="fas fa-fw fa-tachometer-alt"></i>
               <span>Dashboard</span>
-            </a>
+            </Link>
           </li>
 
           <hr className="sidebar-divider" />
@@ -26,13 +27,13 @@ export default function AdminNavbar() {
           <li className="nav-item">
             <a
               className="nav-link collapsed"
-              href="#"
+              href=""
               data-toggle="collapse"
               data-target="#collapseTwo"
               aria-expanded="true"
               aria-controls="collapseTwo"
             >
-              <i class="fa-solid fa-users"></i>
+              <i className="fa-solid fa-users"></i>
               <span> Users</span>
             </a>
             <div
@@ -42,12 +43,12 @@ export default function AdminNavbar() {
               data-parent="#accordionSidebar"
             >
               <div className="bg-white py-2 collapse-inner rounded">
-                <a className="collapse-item" href="">
+                <Link className="collapse-item" to="/admin/add_user">
                   + Add
-                </a>
-                <a className="collapse-item" href="">
+                </Link>
+                <Link className="collapse-item" to="/admin/view_all_users">
                   View all
-                </a>
+                </Link>
               </div>
             </div>
           </li>
@@ -61,7 +62,7 @@ export default function AdminNavbar() {
               aria-expanded="true"
               aria-controls="collapseUtilities"
             >
-              <i class="fa-solid fa-cube"></i>
+              <i className="fa-solid fa-cube"></i>
               <span> Packages</span>
             </a>
             <div
@@ -71,12 +72,12 @@ export default function AdminNavbar() {
               data-parent="#accordionSidebar"
             >
               <div className="bg-white py-2 collapse-inner rounded">
-                <a className="collapse-item" href="">
+                <Link className="collapse-item" to="/admin/add_package">
                   + Add
-                </a>
-                <a className="collapse-item" href="">
+                </Link>
+                <Link className="collapse-item" to="/admin/view_all_packages">
                   View all
-                </a>
+                </Link>
               </div>
             </div>
           </li>
@@ -90,7 +91,7 @@ export default function AdminNavbar() {
               aria-expanded="true"
               aria-controls="collapsePages"
             >
-              <i class="fa-solid fa-building"></i>
+              <i className="fa-solid fa-building"></i>
               <span> Branches</span>
             </a>
             <div
@@ -100,9 +101,9 @@ export default function AdminNavbar() {
               data-parent="#accordionSidebar"
             >
               <div className="bg-white py-2 collapse-inner rounded">
-                <a className="collapse-item" href="">
+                <Link className="collapse-item" to="/admin/add_branch">
                   + Add
-                </a>
+                </Link>
                 <h6 className="collapse-header">current branches:</h6>
                 <a className="collapse-item" href="">
                   Nasr city
@@ -171,7 +172,9 @@ export default function AdminNavbar() {
               </ul>
             </nav>
 
-            <div className="container-fluid"></div>
+            <div className="container-fluid">
+              <Outlet />
+            </div>
           </div>
 
           <footer className="sticky-footer bg-white">
