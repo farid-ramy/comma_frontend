@@ -25,61 +25,17 @@ export default function AdminNavbar() {
           <hr className="sidebar-divider" />
 
           <li className="nav-item">
-            <a
-              className="nav-link collapsed"
-              href=""
-              data-toggle="collapse"
-              data-target="#collapseTwo"
-              aria-expanded="true"
-              aria-controls="collapseTwo"
-            >
+            <Link className="nav-link" to="/admin/users">
               <i className="fa-solid fa-users"></i>
-              <span> Users</span>
-            </a>
-            <div
-              id="collapseTwo"
-              className="collapse"
-              aria-labelledby="headingTwo"
-              data-parent="#accordionSidebar"
-            >
-              <div className="bg-white py-2 collapse-inner rounded">
-                <Link className="collapse-item" to="/admin/add_user">
-                  + Add
-                </Link>
-                <Link className="collapse-item" to="/admin/view_all_users">
-                  View all
-                </Link>
-              </div>
-            </div>
+              <span>Users</span>
+            </Link>
           </li>
 
           <li className="nav-item">
-            <a
-              className="nav-link collapsed"
-              href="#"
-              data-toggle="collapse"
-              data-target="#collapseUtilities"
-              aria-expanded="true"
-              aria-controls="collapseUtilities"
-            >
+            <Link className="nav-link" to="/admin/packages">
               <i className="fa-solid fa-cube"></i>
-              <span> Packages</span>
-            </a>
-            <div
-              id="collapseUtilities"
-              className="collapse"
-              aria-labelledby="headingUtilities"
-              data-parent="#accordionSidebar"
-            >
-              <div className="bg-white py-2 collapse-inner rounded">
-                <Link className="collapse-item" to="/admin/add_package">
-                  + Add
-                </Link>
-                <Link className="collapse-item" to="/admin/view_all_packages">
-                  View all
-                </Link>
-              </div>
-            </div>
+              <span>Packages</span>
+            </Link>
           </li>
 
           <li className="nav-item">
@@ -105,24 +61,24 @@ export default function AdminNavbar() {
                   + Add
                 </Link>
                 <h6 className="collapse-header">current branches:</h6>
-                <a className="collapse-item" href="">
+                <Link className="collapse-item" to="">
                   Nasr city
-                </a>
-                <a className="collapse-item" href="">
+                </Link>
+                <Link className="collapse-item" to="">
                   Obour
-                </a>
-                <a className="collapse-item" href="">
+                </Link>
+                <Link className="collapse-item" to="">
                   New Cairo
-                </a>
+                </Link>
               </div>
             </div>
           </li>
 
           <li className="nav-item">
-            <a className="nav-link" href="">
+            <Link className="nav-link" to="">
               <i className="fas fa-fw fa-chart-area"></i>
               <span>Charts</span>
-            </a>
+            </Link>
           </li>
         </ul>
 

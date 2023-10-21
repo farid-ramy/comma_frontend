@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const URL = "http://127.0.0.1:8000/handel_login";
-
-export default function Login() {
+export default function Login(props) {
+  const URL = props.url;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,15 +11,16 @@ export default function Login() {
 
   async function handleLogin(e) {
     e.preventDefault();
-    let res;
+    // Check if the 'username' or 'password' are not  empty
+    if (!username || !password) {
+      setError("Please fill all the fields");
+      return;
+    }
+
     try {
-      res = await axios({
-        method: "post",
-        url: URL,
-        data: {
-          username,
-          password,
-        },
+      const res = await axios.post(`${URL}/handel_login`, {
+        username,
+        password,
       });
 
       if (res.data.message) navigate("/admin");
