@@ -10,11 +10,25 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  async function handleLogin(e) {
     e.preventDefault();
-    const res = await axios.get(URL);
-    console.log(res);
-  };
+    let res;
+    try {
+      res = await axios({
+        method: "post",
+        url: URL,
+        data: {
+          username,
+          password,
+        },
+      });
+
+      if (res.data.message) navigate("/admin");
+      else setError(res.data.error);
+    } catch (err) {
+      setError("Server Error");
+    }
+  }
 
   return (
     <div className="container">

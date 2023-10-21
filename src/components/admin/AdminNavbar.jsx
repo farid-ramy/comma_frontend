@@ -152,7 +152,7 @@ export default function AdminNavbar() {
                     </span>
                     <img
                       className="img-profile rounded-circle"
-                      src="img/undraw_profile.svg"
+                      src="../../img/undraw_profile.svg"
                     />
                   </a>
                   <div
@@ -189,10 +189,6 @@ export default function AdminNavbar() {
           </footer>
         </div>
       </div>
-
-      <a className="scroll-to-top rounded" href="">
-        <i className="fas fa-angle-up"></i>
-      </a>
     </>
   );
 }
