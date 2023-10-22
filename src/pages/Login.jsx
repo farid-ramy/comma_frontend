@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function Login(props) {
   const URL = props.url;
@@ -23,15 +24,24 @@ export default function Login(props) {
         password,
       });
 
+      console.log(res.data);
+
       if (res.data.message) navigate("/admin");
       else setError(res.data.error);
     } catch (err) {
-      setError("Server Error");
+      toast.error(`Error fetching data: ${error}`);
     }
   }
 
   return (
     <div className="container">
+      <ToastContainer
+        autoClose={5000}
+        hideProgressBar={true}
+        rtl={false}
+        pauseOnFocusLoss
+        theme="light"
+      />
       <div className="row justify-content-center">
         <div className="col-xl-10 col-lg-12 col-md-9">
           <div className="card o-hidden border-0 shadow-lg my-5">
