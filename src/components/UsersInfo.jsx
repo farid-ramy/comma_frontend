@@ -8,12 +8,20 @@ const UsersInfo = (props) => {
   const { userId } = useParams();
   const [user, setUser] = useState({});
 
+  const [newFirstName, setNewFirstName] = useState(user.first_name);
+  const [newLastName, setNewLastName] = useState(user.last_name);
+  const [newEmail, setNewEmail] = useState(user.email || "");
+  const [newPhone, setNewPhone] = useState(user.phone || "");
+  const [newJob, setNewJob] = useState(user.job || "");
+  const [newAge, setNewAge] = useState(user.age || "");
+  const [newAddress, setNewAddress] = useState(user.address || "");
+  const [newNationalId, setNewNationalId] = useState(user.national_id || "");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${URL}/get_user_by_id/${userId}`);
+        const res = await axios.get(`${URL}/users/${userId}`);
         setUser(res.data);
-        console.log(res.data);
       } catch (error) {
         toast.error(`Error fetching data: ${error}`);
       }
@@ -21,6 +29,22 @@ const UsersInfo = (props) => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setNewFirstName(user.first_name);
+    setNewLastName(user.last_name);
+    setNewEmail(user.email);
+    setNewPhone(user.phone);
+    setNewJob(user.job);
+    setNewAge(user.age);
+    setNewAddress(user.address);
+    setNewNationalId(user.national_id);
+  });
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    console.log("handel submit");
+  }
 
   return (
     <div className="container">
@@ -35,7 +59,7 @@ const UsersInfo = (props) => {
         <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
           <div className="card h-100">
             <div className="card-body">
-              <form action="">
+              <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
                     <div className="form-group">
@@ -71,7 +95,8 @@ const UsersInfo = (props) => {
                         className="form-control"
                         id="firstName"
                         placeholder="Enter First Name"
-                        value={user.first_name}
+                        value={newFirstName}
+                        onChange={(e) => setNewFirstName(e.target.value.trim())}
                       />
                     </div>
                   </div>
@@ -83,7 +108,8 @@ const UsersInfo = (props) => {
                         className="form-control"
                         id="lastName"
                         placeholder="Enter Last Name"
-                        value={user.last_name}
+                        value={newLastName}
+                        onChange={(e) => setNewLastName(e.target.value.trim())}
                       />
                     </div>
                   </div>
@@ -95,7 +121,8 @@ const UsersInfo = (props) => {
                         className="form-control"
                         id="email"
                         placeholder="Enter Email"
-                        value={user.email}
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value.trim())}
                       />
                     </div>
                   </div>
@@ -107,7 +134,8 @@ const UsersInfo = (props) => {
                         className="form-control"
                         id="phone"
                         placeholder="Enter Phone"
-                        value={user.phone}
+                        value={newPhone}
+                        onChange={(e) => setNewPhone(e.target.value.trim())}
                       />
                     </div>
                   </div>
@@ -135,7 +163,6 @@ const UsersInfo = (props) => {
                       <button
                         type="reset"
                         id="submit"
-                        name="submit"
                         className="btn btn-secondary"
                       >
                         Cancel

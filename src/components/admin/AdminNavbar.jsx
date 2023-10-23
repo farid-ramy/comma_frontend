@@ -1,4 +1,5 @@
 import React from "react";
+import pp from "../../img/undraw_profile.svg";
 import { Link, Outlet } from "react-router-dom";
 
 export default function AdminNavbar() {
@@ -106,10 +107,7 @@ export default function AdminNavbar() {
                     <span className="mr-2 d-none d-lg-inline text-gray-600 small">
                       Admin Admin
                     </span>
-                    <img
-                      className="img-profile rounded-circle"
-                      src="../../img/undraw_profile.svg"
-                    />
+                    <img className="img-profile rounded-circle" src={pp} />
                   </a>
                   <div
                     className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -119,10 +117,10 @@ export default function AdminNavbar() {
                       <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                       Settings
                     </a>
-                    <a className="dropdown-item" href="#">
+                    <Link className="dropdown-item" to="/">
                       <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                       Logout
-                    </a>
+                    </Link>
                   </div>
                 </li>
               </ul>

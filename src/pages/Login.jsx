@@ -24,7 +24,6 @@ export default function Login(props) {
         password,
       });
 
-      console.log(res.data);
 
       if (res.data.message) navigate("/admin");
       else setError(res.data.error);

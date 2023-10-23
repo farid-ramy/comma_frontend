@@ -17,8 +17,8 @@ export default function ViewAllUsers(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${URL}/get_all_users`);
-        setData(res.data.users);
+        const res = await axios.get(`${URL}/userss`);
+        setData(res.data);
         $(document).ready(function () {
           $("#dataTable").DataTable();
         });
@@ -30,14 +30,14 @@ export default function ViewAllUsers(props) {
     fetchData();
   }, []);
 
-  async function handelDeleteBtn(user) {
+  async function handleDeleteBtn(user) {
     if (
       window.confirm(
         `Are you should you want to delete ${user.first_name} ${user.last_name} ?`
       )
     )
       axios
-        .delete(`${URL}/delete_user/${user.id}`)
+        .delete(`${URL}/users/delete/${user.id}`)
         .then(() => window.location.reload())
         .catch((error) => toast.error(`Error deleting user: ${error}`));
   }
@@ -48,24 +48,27 @@ export default function ViewAllUsers(props) {
     }
   };
 
-  async function handelSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!firstName || !lastName) {
       setError("Fill all the important fields");
       return;
     } else setError("");
     try {
-      console.log(firstName, lastName);
-      const res = await axios.post(`${URL}/add_user`, {
+      const res = await axios.post(`${URL}/users/add`, {
         first_name: firstName,
         last_name: lastName,
-        email,
-        phone,
+        role: "Client",
+        email: email ? email : null,
+        phone: phone ? phone : null,
       });
-      if (res.data.error) setError(res.data.error);
-      else window.location.reload();
+      if (!res.data.id) setError(res.data[Object.keys(res.data)[0]][0]);
+      else {
+        console.log('x')
+        window.location.reload();
+      }
     } catch (error) {
-      toast.error(`Error fetching data: ${error}`);
+      toast.error(`${error}`);
     }
   }
 
@@ -114,7 +117,7 @@ export default function ViewAllUsers(props) {
                 </tr>
               </thead>
               <tbody>
-                {data.map((user) => (
+                {data.slice(1).map((user) => (
                   <tr key={user.id}>
                     <td>{user.id}</td>
                     <td>
@@ -144,7 +147,7 @@ export default function ViewAllUsers(props) {
                     <td>
                       <button
                         className="text-danger border-0 bg-color bg-transparent"
-                        onClick={() => handelDeleteBtn(user)}
+                        onClick={() => handleDeleteBtn(user)}
                       >
                         <i className="fa-solid fa-trash-can"></i>
                       </button>
@@ -180,7 +183,7 @@ export default function ViewAllUsers(props) {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form onSubmit={handelSubmit}>
+            <form onSubmit={handleSubmit}>
               <div className="modal-body">
                 <p className="h6 text-danger mb-4 text-center">{error}</p>
                 <div className="form-row">
