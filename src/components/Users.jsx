@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import $ from "jquery";
 
-export default function ViewAllUsers(props) {
+export default function Users(props) {
   const URL = props.url;
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [role, setRole] = useState("client");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
@@ -58,7 +59,7 @@ export default function ViewAllUsers(props) {
       const res = await axios.post(`${URL}/users/add`, {
         first_name: firstName,
         last_name: lastName,
-        role: "Client",
+        role,
         email: email ? email : null,
         phone: phone ? phone : null,
       });
@@ -183,6 +184,25 @@ export default function ViewAllUsers(props) {
             <form onSubmit={handleSubmit}>
               <div className="modal-body">
                 <p className="h6 text-danger mb-4 text-center">{error}</p>
+                <div className="form-row">
+                  <div className="form-group col-md-6">
+                    <label htmlFor="id">
+                      Role
+                      <span className="text-danger"> * </span>
+                    </label>
+                    <br />
+                    <select
+                      id="role"
+                      className="form-select"
+                      aria-label="Default select example"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value.trim())}
+                    >
+                      <option defaultValuevalue="client">Client</option>
+                      <option value="employee">Employee</option>
+                    </select>
+                  </div>
+                </div>
                 <div className="form-row">
                   <div className="form-group col-md-6">
                     <label htmlFor="firstName">

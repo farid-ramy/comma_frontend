@@ -7,7 +7,7 @@ export default function Login(props) {
   const URL = props.url;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState("-");
   const navigate = useNavigate();
 
   async function handleLogin(e) {
