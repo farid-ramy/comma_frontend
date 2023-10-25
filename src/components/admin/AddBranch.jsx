@@ -35,7 +35,11 @@ export default function AddBranch(props) {
 
       <div className="card shadow mb-4">
         <div className="card-body">
-          {/* page content  */}
+          {/* page content  */
+
+
+
+          }
         </div>
       </div>
 
