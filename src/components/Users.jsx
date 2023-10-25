@@ -63,10 +63,7 @@ export default function ViewAllUsers(props) {
         phone: phone ? phone : null,
       });
       if (!res.data.id) setError(res.data[Object.keys(res.data)[0]][0]);
-      else {
-        console.log('x')
-        window.location.reload();
-      }
+      else window.location.reload();
     } catch (error) {
       toast.error(`${error}`);
     }
@@ -138,7 +135,7 @@ export default function ViewAllUsers(props) {
                     </td>
                     <td>{user.email ? "***" : "-"}</td>
                     <td>{user.phone ? "***" : "-"}</td>
-                    <td>{user.age ? user.age : "-"}</td>
+                    <td>{user.age ?? "-"}</td>
                     <td>{user.job ? user.job.slice(0, 5) + "..." : "-"}</td>
                     <td>
                       {user.address ? user.address.slice(0, 5) + ".." : "-"}

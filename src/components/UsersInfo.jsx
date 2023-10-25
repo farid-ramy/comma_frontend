@@ -7,15 +7,16 @@ const UsersInfo = (props) => {
   const URL = props.url;
   const { userId } = useParams();
   const [user, setUser] = useState({});
+  const [error, setError] = useState("");
 
-  const [newFirstName, setNewFirstName] = useState(user.first_name);
-  const [newLastName, setNewLastName] = useState(user.last_name);
-  const [newEmail, setNewEmail] = useState(user.email || "");
-  const [newPhone, setNewPhone] = useState(user.phone || "");
-  const [newJob, setNewJob] = useState(user.job || "");
-  const [newAge, setNewAge] = useState(user.age || "");
-  const [newAddress, setNewAddress] = useState(user.address || "");
-  const [newNationalId, setNewNationalId] = useState(user.national_id || "");
+  const [newFirstName, setNewFirstName] = useState("");
+  const [newLastName, setNewLastName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [newJob, setNewJob] = useState("");
+  const [newAge, setNewAge] = useState("");
+  const [newAddress, setNewAddress] = useState("");
+  const [newNationalId, setNewNationalId] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,11 +40,25 @@ const UsersInfo = (props) => {
     setNewAge(user.age);
     setNewAddress(user.address);
     setNewNationalId(user.national_id);
-  });
+  }, [user]);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log("handel submit");
+    try {
+      const res = await axios.put(`${URL}/users/update/${userId}`, {
+        first_name: newFirstName ?? null,
+        last_name: newLastName ?? null,
+        email: newEmail ?? null,
+        phone: newPhone ?? null,
+        job: newJob ?? null,
+        age: newAge ?? null,
+        address: newAddress ?? null,
+        national_id: newNationalId ?? null,
+      });
+      console.log(res)
+    } catch (error) {
+      toast.error(`Error fetching data: ${error}`);
+    }
   }
 
   return (
@@ -68,7 +83,7 @@ const UsersInfo = (props) => {
                         type="text"
                         className="form-control"
                         id="id"
-                        value={user.id}
+                        value={user.id ?? ""}
                         disabled
                       />
                     </div>
@@ -80,7 +95,7 @@ const UsersInfo = (props) => {
                         type="text"
                         className="form-control"
                         id="role"
-                        value={user.role}
+                        value={user.role ?? ""}
                         disabled
                       />
                     </div>
@@ -147,6 +162,8 @@ const UsersInfo = (props) => {
                     className="form-control"
                     id="address"
                     placeholder="Enter Address"
+                    value={newAddress}
+                    onChange={(e) => setNewAddress(e.target.value.trim())}
                   />
                 </div>
                 <div className="row">
