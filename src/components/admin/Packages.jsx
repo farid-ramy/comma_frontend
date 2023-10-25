@@ -7,9 +7,28 @@ import $ from "jquery";
 export default function Packages(props) {
   const URL = props.url;
   const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
+
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!name || !price || !description) {
+      setError("Fill all the important fields");
+      return;
+    } else setError("");
+    try {
+      const res = await axios.post(`${URL}/packages/add`, {
+        name: name,
+        price: price,
+
+      });
+      if (!res.data.id) setError(res.data[Object.keys(res.data)[0]][0]);
+      else window.location.reload();
+    } catch (error) {
+      toast.error(`${error}`);
+    }
   }
 
   return (
@@ -74,6 +93,8 @@ export default function Packages(props) {
                       className="form-control"
                       id="name"
                       placeholder="Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value.trim())}
                     />
                   </div>
                   <div className="form-group col-md-6">
@@ -86,6 +107,8 @@ export default function Packages(props) {
                       className="form-control"
                       id="price"
                       placeholder="Price"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value.trim())}
                     />
                   </div>
                 </div>
@@ -96,6 +119,8 @@ export default function Packages(props) {
                       class="form-control"
                       placeholder="Description.."
                       id="floatingTextarea2"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value.trim())}
                     ></textarea>
                   </div>
                 </div>
