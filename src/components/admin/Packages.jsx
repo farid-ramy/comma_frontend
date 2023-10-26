@@ -99,7 +99,18 @@ export default function Packages(props) {
           </div>
         </div>
       </div>
-      {/*write the view part here  */}
+      {viewingPackage && (
+        <div className="card shadow mb-4">
+          <div className="card-body">
+            <h3>Package Details</h3>
+            <p><strong>Name:</strong> {viewingPackage.name}</p>
+            <p><strong>Price:</strong> ${viewingPackage.price}</p>
+            <button className="btn btn-danger" onClick={closeView}>
+              Close
+            </button>
+          </div>
+       </div>
+       )}
 
 
 
