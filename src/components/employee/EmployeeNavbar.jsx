@@ -60,7 +60,7 @@ export default function EmployeeNavbar() {
                     aria-expanded="false"
                   >
                     <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                      Employee Employee
+                      Employee Employee 
                     </span>
                     <img className="img-profile rounded-circle" src={pp} />
                   </a>

@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { LoggedInUserContext } from "../App";
 
 export default function Login(props) {
   const URL = props.url;
+  const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("-");
@@ -24,9 +26,13 @@ export default function Login(props) {
         password,
       });
 
-
-      if (res.data.message) navigate("/admin");
-      else setError(res.data.error);
+       if (res.data.message) {
+      // if (res.data.id) {
+        console.log(res.data)
+        setLoggedInUser(res.data);
+        navigate(`/admin`);
+        // navigate(`/${res.data.role}`);
+      } else setError(res.data.error);
     } catch (err) {
       toast.error(`Error fetching data: ${error}`);
     }

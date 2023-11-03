@@ -18,7 +18,7 @@ export default function Users(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${URL}/userss`);
+        const res = await axios.get(`${URL}/users/get_users`);
         setData(res.data);
         $(document).ready(function () {
           $("#dataTable").DataTable();
@@ -198,7 +198,7 @@ export default function Users(props) {
                       value={role}
                       onChange={(e) => setRole(e.target.value.trim())}
                     >
-                      <option defaultValuevalue="client">Client</option>
+                      <option value="client">Client</option>
                       <option value="employee">Employee</option>
                     </select>
                   </div>

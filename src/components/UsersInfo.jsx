@@ -21,7 +21,7 @@ export default function UsersInfo(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${URL}/users/${userId}`);
+        const res = await axios.get(`${URL}/users/get_users/${userId}`);
         setUser(res.data);
       } catch (error) {
         toast.error(`Error fetching data: ${error}`);

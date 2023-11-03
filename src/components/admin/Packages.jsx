@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import $ from "jquery";
 
-
 export default function Packages(props) {
   const URL = props.url;
   const [error, setError] = useState("");
@@ -14,12 +13,9 @@ export default function Packages(props) {
   const [packages, setPackages] = useState([]);
   const [viewingPackage, setViewingPackage] = useState(null);
 
-
-
-
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!name || !price || !description) {
+    if (!name || !price) {
       setError("Fill all the important fields");
       return;
     } else setError("");
@@ -27,7 +23,6 @@ export default function Packages(props) {
       const res = await axios.post(`${URL}/packages/add`, {
         name: name,
         price: price,
-
       });
       if (!res.data.id) setError(res.data[Object.keys(res.data)[0]][0]);
       else window.location.reload();
@@ -55,7 +50,6 @@ export default function Packages(props) {
     setViewingPackage(null);
   }
 
-
   return (
     <div className="container-fluid">
       <ToastContainer
@@ -76,45 +70,46 @@ export default function Packages(props) {
           + Add Package
         </button>
       </div>
-      {/* the code for the view  */}
+      {viewingPackage && (
+        <div className="card shadow mb-4">
+          <div className="card-body">
+            <h3>Package Details</h3>
+            <p>
+              <strong>Name:</strong> {viewingPackage.name}
+            </p>
+            <p>
+              <strong>Price:</strong> ${viewingPackage.price}
+            </p>
+            <p>
+              <strong>Description:</strong>
+              {viewingPackage.description ?? "-"}
+            </p>
+            <button className="btn btn-danger" onClick={closeView}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       <div className="card shadow mb-4">
         <div className="card-body">
-          <div className="row">
+          <div className="rd-flex flex-wrap">
             {packages.map((pkg) => (
-              <div className="col-sm-6 mb-3 mb-sm-0" key={pkg.id}>
-                <div className="card">
-                  <div className="card-body">
-                    <h5 className="card-title">{pkg.name}</h5>
-                    <p className="card-text">Price: ${pkg.price}</p>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => viewPackage(pkg)}
-                    >
-                      View Package
-                    </button>
-                  </div>
+              <div className="card" key={pkg.id}>
+                <div className="card-body">
+                  <h5 className="card-title">{pkg.name}</h5>
+                  <p className="card-text">Price: ${pkg.price}</p>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => viewPackage(pkg)}
+                  >
+                    View Package
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      {viewingPackage && (
-        <div className="card shadow mb-4">
-          <div className="card-body">
-            <h3>Package Details</h3>
-            <p><strong>Name:</strong> {viewingPackage.name}</p>
-            <p><strong>Price:</strong> ${viewingPackage.price}</p>
-            <button className="btn btn-danger" onClick={closeView}>
-              Close
-            </button>
-          </div>
-       </div>
-       )}
-
-
-
-
       <div
         className="modal fade"
         id="exampleModal"
@@ -173,9 +168,9 @@ export default function Packages(props) {
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-12">
-                    <label for="floatingTextarea2">Description</label>
+                    <label htmlFor="floatingTextarea2">Description</label>
                     <textarea
-                      class="form-control"
+                      className="form-control"
                       placeholder="Description.."
                       id="floatingTextarea2"
                       value={description}
