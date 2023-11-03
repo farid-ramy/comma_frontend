@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import pp from "../../img/undraw_profile.svg";
 import { Link, Outlet } from "react-router-dom";
+import { LoggedInUserContext } from "../../App";
 
-export default function EmployeeNavbar() {
+export default function EmployeeNavbar(props) {
+  const URL = props.url;
+  const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
+
   return (
     <>
       <div id="wrapper">
@@ -18,7 +22,7 @@ export default function EmployeeNavbar() {
 
           <li className="nav-item">
             <Link className="nav-link" to="/employee/checkedIn">
-              <i class="fa-solid fa-check"></i>
+              <i className="fa-solid fa-check"></i>
               <span>Checked in</span>
             </Link>
           </li>
@@ -60,7 +64,7 @@ export default function EmployeeNavbar() {
                     aria-expanded="false"
                   >
                     <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                      Employee Employee 
+                      {loggedInUser.first_name} {loggedInUser.last_name}
                     </span>
                     <img className="img-profile rounded-circle" src={pp} />
                   </a>

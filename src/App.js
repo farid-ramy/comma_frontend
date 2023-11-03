@@ -31,7 +31,7 @@ export default function App() {
           <Route path="packages" element={<Packages url={URL} />} />
           <Route path="add_branch" element={<AddBranch url={URL} />} />
         </Route>
-        <Route path="employee" element={<EmployeeNavbar />}>
+        <Route path="employee" element={<EmployeeNavbar url={URL} />}>
           <Route path="checkedIn" element={<CheckedIn url={URL} />} />
           <Route path="users" element={<Users url={URL} />} />
           <Route path="branch" element={<Branch url={URL} />} />

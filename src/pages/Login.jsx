@@ -26,13 +26,11 @@ export default function Login(props) {
         password,
       });
 
-       if (res.data.message) {
-      // if (res.data.id) {
-        console.log(res.data)
+      if (res.data.error) setError(res.data.error);
+      else {
         setLoggedInUser(res.data);
-        navigate(`/admin`);
-        // navigate(`/${res.data.role}`);
-      } else setError(res.data.error);
+        navigate(`/${res.data.role}`);
+      }
     } catch (err) {
       toast.error(`Error fetching data: ${error}`);
     }
