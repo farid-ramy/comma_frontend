@@ -8,6 +8,7 @@ export default function Users(props) {
   const URL = props.url;
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
+  const [reload, setReload] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -29,7 +30,7 @@ export default function Users(props) {
     };
 
     fetchData();
-  }, []);
+  }, [reload]);
 
   async function handleDeleteBtn(user) {
     if (
@@ -39,7 +40,7 @@ export default function Users(props) {
     )
       axios
         .delete(`${URL}/users/delete/${user.id}`)
-        .then(() => window.location.reload())
+        .then(() => setReload(!reload))
         .catch((error) => toast.error(`Error deleting user: ${error}`));
   }
 
@@ -64,7 +65,7 @@ export default function Users(props) {
         phone: phone ? phone : null,
       });
       if (!res.data.id) setError(res.data[Object.keys(res.data)[0]][0]);
-      else window.location.reload();
+      else setReload(!reload);
     } catch (error) {
       toast.error(`${error}`);
     }
