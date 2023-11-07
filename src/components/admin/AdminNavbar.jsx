@@ -21,7 +21,7 @@ export default function AdminNavbar(props) {
     };
 
     fetchBranches();
-  }, []);
+  }, [props.reload]);
 
   return (
     <div id="wrapper">
@@ -73,12 +73,21 @@ export default function AdminNavbar(props) {
               <Link className="collapse-item" to="/admin/add_branch">
                 + Add
               </Link>
-              <h6 className="collapse-header">current branches:</h6>
-              {branches.map((branche) => (
-                <Link className="collapse-item" to="" key={branche.id}>
-                  {branche.name}
-                </Link>
-              ))}
+
+              {branches.length > 0 ? (
+                <div>
+                  <h6 className="collapse-header">current branches:</h6>
+                  {branches.map((branch) => (
+                    <Link
+                      className="collapse-item"
+                      to={`/admin/branch/${branch.id}`}
+                      key={branch.id}
+                    >
+                      {branch.name}
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
         </li>

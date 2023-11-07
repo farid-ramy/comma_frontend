@@ -40,11 +40,12 @@ export default function AddBranch(props) {
         name,
         address,
         phone,
-        employee_id,
+        employee_id: employee_id ? employee_id : null,
       });
       if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
       else {
         ShowSuccessAlert("Branch added successfully");
+        props.setReload(!props.reload);
       }
     } catch (error) {
       ShowFailedAlert(error);
@@ -87,7 +88,6 @@ export default function AddBranch(props) {
                 pattern="[0-9]*"
                 className="form-control"
                 id="phone"
-                placeholder="phone"
                 value={phone}
                 onChange={(e) => {
                   if (/^\d*$/.test(e.target.value.trim())) {
@@ -103,7 +103,7 @@ export default function AddBranch(props) {
                 aria-label="Default select example"
                 onChange={(e) => setEmployee_id(e.target.value.trim())}
               >
-                <option value={null}>None</option>
+                <option value={""}>None</option>
                 {employees
                   ? employees.map((employee) => (
                       <option value={employee.id} key={employee.id}>

@@ -20,17 +20,26 @@ export const LoggedInUserContext = createContext();
 
 export default function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [reload, setReload] = useState(false);
 
   return (
     <LoggedInUserContext.Provider value={{ loggedInUser, setLoggedInUser }}>
       <Routes>
         <Route element={<PrivateRoutes />}>
-          <Route path="admin" element={<AdminNavbar url={URL} />}>
+          <Route
+            path="admin"
+            element={<AdminNavbar url={URL} reload={reload} />}
+          >
             <Route path="dashboard" element={<Dashboard url={URL} />} />
             <Route path="users" element={<Users url={URL} />} />
             <Route path="user_info/:userId" element={<UsersInfo url={URL} />} />
             <Route path="packages" element={<Packages url={URL} />} />
-            <Route path="add_branch" element={<AddBranch url={URL} />} />
+            <Route
+              path="add_branch"
+              element={
+                <AddBranch url={URL} reload={reload} setReload={setReload} />
+              }
+            />
           </Route>
           <Route path="employee" element={<EmployeeNavbar url={URL} />}>
             <Route path="checkedIn" element={<CheckedIn url={URL} />} />

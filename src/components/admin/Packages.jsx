@@ -67,6 +67,10 @@ export default function Packages(props) {
         .catch((error) => ShowFailedAlert(error));
   };
 
+  const handleUpdate = (pkg) => {
+    
+  };
+
   return (
     <div className="container-fluid">
       <div className="d-flex flex-row-reverse">
@@ -99,7 +103,12 @@ export default function Packages(props) {
               <strong>Description:</strong>
               {viewingPackage.description ?? "-"}
             </p>
-            <button className="btn btn-success mr-2">Update</button>
+            <button
+              className="btn btn-success mr-2"
+              onClick={() => handleUpdate(viewingPackage)}
+            >
+              Update
+            </button>
             <button
               className="btn btn-danger ml-2"
               onClick={() => handleDelete(viewingPackage)}

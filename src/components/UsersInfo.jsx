@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
+import { ShowFailedAlert } from "../utilities/toastify";
 
 export default function UsersInfo(props) {
   const URL = props.url;
   const { userId } = useParams();
   const [user, setUser] = useState({});
-  const [error, setError] = useState("");
 
   const [newFirstName, setNewFirstName] = useState("");
   const [newLastName, setNewLastName] = useState("");
@@ -24,7 +23,7 @@ export default function UsersInfo(props) {
         const res = await axios.get(`${URL}/users/get_users/${userId}`);
         setUser(res.data);
       } catch (error) {
-        toast.error(`Error fetching data: ${error}`);
+        ShowFailedAlert(error);
       }
     };
 
@@ -42,40 +41,17 @@ export default function UsersInfo(props) {
     setNewNationalId(user.national_id);
   }, [user]);
 
-  async function handleSubmit(e) {
+  async function handleUpdate(e) {
     e.preventDefault();
-    try {
-      const res = await axios.put(`${URL}/users/update/${userId}`, {
-        first_name: newFirstName ?? null,
-        last_name: newLastName ?? null,
-        email: newEmail ?? null,
-        phone: newPhone ?? null,
-        job: newJob ?? null,
-        age: newAge ?? null,
-        address: newAddress ?? null,
-        national_id: newNationalId ?? null,
-      });
-      console.log(res);
-    } catch (error) {
-      toast.error(`Error fetching data: ${error}`);
-    }
   }
 
   return (
     <div className="container">
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={true}
-        rtl={false}
-        pauseOnFocusLoss
-        theme="light"
-      />
       <div className="row gutters">
         <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
           <div className="card h-100">
             <div className="card-body">
-              <p className="h6 text-danger mb-4 text-center">{error}</p>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleUpdate}>
                 <div className="row">
                   <div className="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
                     <div className="form-group">
