@@ -77,7 +77,7 @@ export default function Users(props) {
       ShowFailedAlert(error);
     }
   }
-  
+
   return (
     <div className="container-fluid">
       <div className="d-flex flex-row-reverse">
@@ -133,8 +133,14 @@ export default function Users(props) {
                         {user.last_name}
                       </Link>
                     </td>
-                    <td>{user.email ? "***" : "-"}</td>
-                    <td>{user.phone ? "***" : "-"}</td>
+                    <td>
+                      {user.email ? "***" : "-"}
+                      <span className="d-none">{user.email ?? ""}</span>
+                    </td>
+                    <td>
+                      {user.phone ? "***" : "-"}
+                      <span className="d-none">{user.phone ?? ""}</span>
+                    </td>
                     <td>{user.role}</td>
                     <td>{user.job ? user.job.slice(0, 5) + "..." : "-"}</td>
                     <td>

@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ShowFailedAlert, ShowWarningAlert } from "../../utilities/toastify";
+import {
+  ShowFailedAlert,
+  ShowSuccessAlert,
+  ShowWarningAlert,
+} from "../../utilities/toastify";
 
 export default function Packages(props) {
   const URL = props.url;
+  const [reload, setReload] = useState(false);
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -23,7 +28,7 @@ export default function Packages(props) {
         price: price,
       });
       if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
-      else window.location.reload();
+      else setReload(!reload);
     } catch (error) {
       ShowFailedAlert(error);
     }
@@ -40,15 +45,27 @@ export default function Packages(props) {
     };
 
     fetchData();
-  }, []);
+  }, [reload]);
 
   async function viewPackage(pkg) {
     setViewingPackage(pkg);
   }
-  
+
   async function closeView() {
     setViewingPackage(null);
   }
+
+  const handleDelete = (pkg) => {
+    if (window.confirm(`Are you should you want to delete ${pkg.name} ?`))
+      axios
+        .delete(`${URL}/packages/delete/${pkg.id}`)
+        .then(() => {
+          setReload(!reload);
+          ShowSuccessAlert(`${pkg.name}  was deleted successfully`);
+          closeView();
+        })
+        .catch((error) => ShowFailedAlert(error));
+  };
 
   return (
     <div className="container-fluid">
@@ -65,6 +82,12 @@ export default function Packages(props) {
       {viewingPackage && (
         <div className="card shadow mb-4">
           <div className="card-body">
+            <button
+              type="button"
+              className="btn-close float-end"
+              aria-label="Close"
+              onClick={closeView}
+            ></button>
             <h3>Package Details</h3>
             <p>
               <strong>Name:</strong> {viewingPackage.name}
@@ -76,8 +99,12 @@ export default function Packages(props) {
               <strong>Description:</strong>
               {viewingPackage.description ?? "-"}
             </p>
-            <button className="btn btn-danger" onClick={closeView}>
-              Close
+            <button className="btn btn-success mr-2">Update</button>
+            <button
+              className="btn btn-danger ml-2"
+              onClick={() => handleDelete(viewingPackage)}
+            >
+              delete
             </button>
           </div>
         </div>
@@ -86,7 +113,7 @@ export default function Packages(props) {
         <div className="card-body">
           <div className="row">
             {packages.map((pkg) => (
-              <div className="card m-2 col-3" key={pkg.id}>
+              <div className="card m-3 col-3" key={pkg.id}>
                 <div className="card-body">
                   <h5 className="card-title">{pkg.name}</h5>
                   <p className="card-text">Price: ${pkg.price}</p>
@@ -161,28 +188,22 @@ export default function Packages(props) {
                     />
                   </div>
                 </div>
-                <div className="form-row">
-                  <div className="form-group col-md-12">
-                    <label htmlFor="floatingTextarea2">Description</label>
-                    <textarea
-                      className="form-control"
-                      placeholder="Description.."
-                      id="floatingTextarea2"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value.trim())}
-                    ></textarea>
-                  </div>
+                <div className="form-group col-md-12">
+                  <label htmlFor="floatingTextarea2">Description</label>
+                  <textarea
+                    className="form-control"
+                    placeholder="Description.."
+                    id="floatingTextarea2"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value.trim())}
+                  ></textarea>
                 </div>
               </div>
               <div className="modal-footer">
                 <button type="submit" className="btn btn-success">
                   Add
                 </button>
-                <button
-                  type="reset"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
-                >
+                <button type="reset" className="btn btn-secondary">
                   cancel
                 </button>
               </div>
