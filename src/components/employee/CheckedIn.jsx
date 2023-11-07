@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
 import "../../css/SearchBar.css";
 import axios from "axios";
+import { ShowWarningAlert } from "../../utilities/toastify";
 
 export default function CheckedIn(props) {
   const URL = props.url;
@@ -15,7 +15,7 @@ export default function CheckedIn(props) {
         const users = await axios(`${URL}/users/get_users/clients`);
         setUsers(users);
       } catch (error) {
-        toast.error(`Error fetching data: ${error}`);
+        ShowWarningAlert(error);
       }
     };
 
@@ -50,19 +50,13 @@ export default function CheckedIn(props) {
 
   return (
     <div>
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={true}
-        rtl={false}
-        pauseOnFocusLoss
-        theme="light"
-      />
       <div className="search-bar-container mx-5 px-5">
         <div className="input-wrapper">
-          <i className="fa-solid fa-magnifying-glass"></i>
+          <i className="fa-solid fa-magnifying-glass px-3"></i>
           <input
             placeholder="Type to search..."
             value={input}
+            type="search"
             onChange={(e) => handleChange(e.target.value.trim())}
           />
         </div>
@@ -78,11 +72,11 @@ export default function CheckedIn(props) {
                     <div className="col-3 text-start ">
                       {user.email ?? "-"}{" "}
                     </div>
-                    <div className="col-3 text-start ">
+                    <div className="col-2 text-start ">
                       {user.phone ?? "-"}{" "}
                     </div>
                     <button
-                      className="btn btn-success"
+                      className="btn btn-success col-1"
                       onClick={() => handleStart(user.id)}
                     >
                       Start
@@ -115,9 +109,7 @@ export default function CheckedIn(props) {
                   <th></th>
                 </tr>
               </thead>
-              <tbody>
-                
-              </tbody>
+              <tbody></tbody>
             </table>
           </div>
         </div>

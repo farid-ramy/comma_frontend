@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import $ from "jquery";
+import { ShowFailedAlert, ShowWarningAlert } from "../../utilities/toastify";
 
 export default function Packages(props) {
   const URL = props.url;
-  const [error, setError] = useState("");
+
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
@@ -16,18 +14,18 @@ export default function Packages(props) {
   async function handleSubmit(e) {
     e.preventDefault();
     if (!name || !price) {
-      setError("Fill all the important fields");
+      ShowWarningAlert("Fill all the important fields");
       return;
-    } else setError("");
+    }
     try {
       const res = await axios.post(`${URL}/packages/add`, {
         name: name,
         price: price,
       });
-      if (!res.data.id) setError(res.data[Object.keys(res.data)[0]][0]);
+      if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
       else window.location.reload();
     } catch (error) {
-      toast.error(`${error}`);
+      ShowFailedAlert(error);
     }
   }
 
@@ -37,29 +35,23 @@ export default function Packages(props) {
         const res = await axios.get(`${URL}/packages`);
         setPackages(res.data);
       } catch (error) {
-        toast.error(`Error fetching data: ${error}`);
+        ShowFailedAlert(error);
       }
     };
 
     fetchData();
   }, []);
+
   async function viewPackage(pkg) {
     setViewingPackage(pkg);
   }
+  
   async function closeView() {
     setViewingPackage(null);
   }
 
   return (
     <div className="container-fluid">
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={true}
-        rtl={false}
-        pauseOnFocusLoss
-        theme="light"
-      />
-
       <div className="d-flex flex-row-reverse">
         <button
           type="button"
@@ -92,9 +84,9 @@ export default function Packages(props) {
       )}
       <div className="card shadow mb-4">
         <div className="card-body">
-          <div className="rd-flex flex-wrap">
+          <div className="row">
             {packages.map((pkg) => (
-              <div className="card" key={pkg.id}>
+              <div className="card m-2 col-3" key={pkg.id}>
                 <div className="card-body">
                   <h5 className="card-title">{pkg.name}</h5>
                   <p className="card-text">Price: ${pkg.price}</p>
@@ -135,7 +127,6 @@ export default function Packages(props) {
             </div>
             <form onSubmit={handleSubmit}>
               <div className="modal-body">
-                <p className="h6 text-danger mb-4 text-center">{error}</p>
                 <div className="form-row">
                   <div className="form-group col-md-6">
                     <label htmlFor="name">
@@ -162,7 +153,11 @@ export default function Packages(props) {
                       id="price"
                       placeholder="Price"
                       value={price}
-                      onChange={(e) => setPrice(e.target.value.trim())}
+                      onChange={(e) => {
+                        if (/^\d*$/.test(e.target.value.trim())) {
+                          setPrice(e.target.value.trim());
+                        }
+                      }}
                     />
                   </div>
                 </div>

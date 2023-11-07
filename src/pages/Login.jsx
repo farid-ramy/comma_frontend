@@ -1,22 +1,22 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
 import { LoggedInUserContext } from "../App";
+import { ShowFailedAlert, ShowWarningAlert } from "../utilities/toastify";
 
 export default function Login(props) {
   const URL = props.url;
   const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("-");
+
   const navigate = useNavigate();
 
   async function handleLogin(e) {
     e.preventDefault();
-    // Check if the 'username' or 'password' are not  empty
     if (!username || !password) {
-      setError("Please fill all the fields");
+      ShowWarningAlert("Please fill all the fields");
       return;
     }
 
@@ -26,25 +26,21 @@ export default function Login(props) {
         password,
       });
 
-      if (res.data.error) setError(res.data.error);
-      else {
+      if (res.data.error) {
+        ShowFailedAlert(res.data.error);
+        return;
+      } else {
         setLoggedInUser(res.data);
+        localStorage.setItem("loggedInUser", res.data);
         navigate(`/${res.data.role}`);
       }
     } catch (err) {
-      toast.error(`Error fetching data: ${error}`);
+      ShowWarningAlert("Please check your connection or try again later");
     }
   }
 
   return (
     <div className="container">
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={true}
-        rtl={false}
-        pauseOnFocusLoss
-        theme="light"
-      />
       <div className="row justify-content-center">
         <div className="col-xl-10 col-lg-12 col-md-9">
           <div className="card o-hidden border-0 shadow-lg my-5">
@@ -57,7 +53,6 @@ export default function Login(props) {
                   <div className="p-5">
                     <div className="text-center">
                       <h1 className="h3 text-gray-900 mb-4">Welcome Back!</h1>
-                      <p className="h6 text-danger mb-4">{error}</p>
                     </div>
                     <br />
                     <br />

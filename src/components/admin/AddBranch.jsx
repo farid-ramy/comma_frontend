@@ -1,136 +1,130 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import $ from "jquery";
+import {
+  ShowFailedAlert,
+  ShowSuccessAlert,
+  ShowWarningAlert,
+} from "../../utilities/toastify";
 
 export default function AddBranch(props) {
   const URL = props.url;
-  const [error, setError] = useState("");
+  const [employees, setEmployees] = useState();
+
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [employee_id, setEmployee_id] = useState("");
+  const [opening_hours, setOpening_hours] = useState("");
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const res = await axios.get(`${URL}/users/get_users/employees`);
+        setEmployees(res.data);
+      } catch (error) {
+        ShowFailedAlert(error);
+      }
+    };
+
+    fetchBranches();
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!name) {
+      ShowWarningAlert("Please enter the branch name");
+      return;
+    }
+    try {
+      const res = await axios.post(`${URL}/branches/add`, {
+        name,
+        address,
+        phone,
+        employee_id,
+      });
+      if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+      else {
+        ShowSuccessAlert("Branch added successfully");
+      }
+    } catch (error) {
+      ShowFailedAlert(error);
+    }
   }
 
   return (
     <div className="container-fluid">
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={true}
-        rtl={false}
-        pauseOnFocusLoss
-        theme="light"
-      />
-
-      <div className="d-flex flex-row-reverse">
-        <button
-          type="button"
-          className="btn btn-secondary mb-3"
-          data-toggle="modal"
-          data-target="#exampleModal"
-        >
-          + Add Branch
-        </button>
-      </div>
-
       <div className="card shadow mb-4">
         <div className="card-body">
-          {/* page content  */
-
-
-
-          }
-        </div>
-      </div>
-
-      <div
-        className="modal fade"
-        id="exampleModal"
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                Add new User
-              </h5>
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3 col-3">
+              <label htmlFor="exampleFormControlInput1" className="form-label">
+                Name <span className="text-danger"> *</span>
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="exampleFormControlInput1"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
-            <form onSubmit={handleSubmit}>
-              <div className="modal-body">
-                <p className="h6 text-danger mb-4 text-center">{error}</p>
-                <div className="form-row">
-                  <div className="form-group col-md-6">
-                    <label htmlFor="firstName">
-                      First Name
-                      <span className="text-danger"> * </span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="firstName"
-                      placeholder="First name"
-                    />
-                  </div>
-                  <div className="form-group col-md-6">
-                    <label htmlFor="lastName">
-                      Last Name
-                      <span className="text-danger"> * </span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="lastName"
-                      placeholder="Last name"
-                    />
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="form-group col-md-6">
-                    <label htmlFor="Email">Email</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="Email"
-                      placeholder="Email"
-                    />
-                  </div>
-                  <div className="form-group col-md-6">
-                    <label htmlFor="phone">Phone</label>
-                    <input
-                      type="text"
-                      pattern="[0-9]*"
-                      className="form-control"
-                      id="phone"
-                      placeholder="phone"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer">
+            <div className="mb-3 col-4">
+              <label htmlFor="exampleFormControlInput2" className="form-label">
+                Address
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="exampleFormControlInput2"
+                value={address}
+                onChange={(e) => setAddress(e.target.value.trim())}
+              />
+            </div>
+            <div className="mb-3 col-3">
+              <label htmlFor="phone">Phone</label>
+              <input
+                type="text"
+                pattern="[0-9]*"
+                className="form-control"
+                id="phone"
+                placeholder="phone"
+                value={phone}
+                onChange={(e) => {
+                  if (/^\d*$/.test(e.target.value.trim())) {
+                    setPhone(e.target.value.trim());
+                  }
+                }}
+              />
+            </div>
+            <div className="mb-3 col-3">
+              <label htmlFor="select">Employee</label>
+              <select
+                className="form-select"
+                aria-label="Default select example"
+                onChange={(e) => setEmployee_id(e.target.value.trim())}
+              >
+                <option value={null}>None</option>
+                {employees
+                  ? employees.map((employee) => (
+                      <option value={employee.id} key={employee.id}>
+                        {employee.first_name + " " + employee.last_name}
+                      </option>
+                    ))
+                  : null}
+                ;
+              </select>
+            </div>
+            <div className="mb-3">
+              <div className="col-4 d-flex justify-content-between">
                 <button type="submit" className="btn btn-success">
                   Add
                 </button>
-                <button
-                  type="reset"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
-                >
+                <button type="reset" className="btn btn-secondary">
                   cancel
                 </button>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>

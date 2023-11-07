@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 import $ from "jquery";
+import {
+  ShowSuccessAlert,
+  ShowFailedAlert,
+  ShowWarningAlert,
+} from "../utilities/toastify";
 
 export default function Users(props) {
   const URL = props.url;
   const [data, setData] = useState([]);
-  const [error, setError] = useState("");
   const [reload, setReload] = useState(false);
 
   const [firstName, setFirstName] = useState("");
@@ -25,7 +28,7 @@ export default function Users(props) {
           $("#dataTable").DataTable();
         });
       } catch (error) {
-        toast.error(`Error fetching data: ${error}`);
+        ShowWarningAlert("Please check your connection or try again later");
       }
     };
 
@@ -40,22 +43,21 @@ export default function Users(props) {
     )
       axios
         .delete(`${URL}/users/delete/${user.id}`)
-        .then(() => setReload(!reload))
-        .catch((error) => toast.error(`Error deleting user: ${error}`));
+        .then(() => {
+          setReload(!reload);
+          ShowSuccessAlert(
+            `${user.first_name} ${user.last_name} was deleted successfully`
+          );
+        })
+        .catch((error) => ShowFailedAlert(error));
   }
-
-  const handlePhoneChange = (e) => {
-    if (/^\d*$/.test(e.target.value.trim())) {
-      setPhone(e.target.value.trim());
-    }
-  };
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (!firstName || !lastName) {
-      setError("Fill all the important fields");
+      ShowWarningAlert("Fill all the important fields");
       return;
-    } else setError("");
+    }
     try {
       const res = await axios.post(`${URL}/users/add`, {
         first_name: firstName,
@@ -64,23 +66,20 @@ export default function Users(props) {
         email: email ? email : null,
         phone: phone ? phone : null,
       });
-      if (!res.data.id) setError(res.data[Object.keys(res.data)[0]][0]);
-      else setReload(!reload);
+      if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+      else {
+        ShowSuccessAlert("User added successfully");
+        setReload(!reload);
+        $("#exampleModal").modal("hide");
+        $("#myForm")[0].reset();
+      }
     } catch (error) {
-      toast.error(`${error}`);
+      ShowFailedAlert(error);
     }
   }
-
+  
   return (
     <div className="container-fluid">
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={true}
-        rtl={false}
-        pauseOnFocusLoss
-        theme="light"
-      />
-
       <div className="d-flex flex-row-reverse">
         <button
           type="button"
@@ -91,7 +90,6 @@ export default function Users(props) {
           + Add User
         </button>
       </div>
-
       <div className="card shadow mb-4">
         <div className="card-body">
           <div className="table-responsive">
@@ -108,7 +106,7 @@ export default function Users(props) {
                   <th>Last name</th>
                   <th>Email</th>
                   <th>Phone</th>
-                  <th>Age</th>
+                  <th>Role</th>
                   <th>Job</th>
                   <th>Address</th>
                   <th>National id</th>
@@ -137,7 +135,7 @@ export default function Users(props) {
                     </td>
                     <td>{user.email ? "***" : "-"}</td>
                     <td>{user.phone ? "***" : "-"}</td>
-                    <td>{user.age ?? "-"}</td>
+                    <td>{user.role}</td>
                     <td>{user.job ? user.job.slice(0, 5) + "..." : "-"}</td>
                     <td>
                       {user.address ? user.address.slice(0, 5) + ".." : "-"}
@@ -158,7 +156,6 @@ export default function Users(props) {
           </div>
         </div>
       </div>
-
       <div
         className="modal fade"
         id="exampleModal"
@@ -182,11 +179,10 @@ export default function Users(props) {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} id="myForm">
               <div className="modal-body">
-                <p className="h6 text-danger mb-4 text-center">{error}</p>
                 <div className="form-row">
-                  <div className="form-group col-md-6">
+                  <div className="form-group col-3">
                     <label htmlFor="id">
                       Role
                       <span className="text-danger"> * </span>
@@ -194,9 +190,8 @@ export default function Users(props) {
                     <br />
                     <select
                       id="role"
-                      className="form-select"
-                      aria-label="Default select example"
                       value={role}
+                      className="form-select "
                       onChange={(e) => setRole(e.target.value.trim())}
                     >
                       <option value="client">Client</option>
@@ -252,7 +247,11 @@ export default function Users(props) {
                       id="phone"
                       placeholder="phone"
                       value={phone}
-                      onChange={handlePhoneChange}
+                      onChange={(e) => {
+                        if (/^\d*$/.test(e.target.value.trim())) {
+                          setPhone(e.target.value.trim());
+                        }
+                      }}
                     />
                   </div>
                 </div>
@@ -261,11 +260,7 @@ export default function Users(props) {
                 <button type="submit" className="btn btn-success">
                   Add
                 </button>
-                <button
-                  type="reset"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
-                >
+                <button type="reset" className="btn btn-secondary">
                   cancel
                 </button>
               </div>

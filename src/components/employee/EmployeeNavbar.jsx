@@ -47,9 +47,8 @@ export default function EmployeeNavbar(props) {
             <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item dropdown no-arrow">
-                  <a
+                  <span
                     className="nav-link dropdown-toggle"
-                    href="#"
                     id="userDropdown"
                     role="button"
                     data-toggle="dropdown"
@@ -57,18 +56,18 @@ export default function EmployeeNavbar(props) {
                     aria-expanded="false"
                   >
                     <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                      {loggedInUser.first_name} {loggedInUser.last_name}
+                      {/* {loggedInUser.first_name} {loggedInUser.last_name} */}
                     </span>
                     <img className="img-profile rounded-circle" src={pp} />
-                  </a>
+                  </span>
                   <div
                     className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                     aria-labelledby="userDropdown"
                   >
-                    <a className="dropdown-item" href="#">
+                    <span className="dropdown-item">
                       <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                       Settings
-                    </a>
+                    </span>
                     <Link className="dropdown-item" to="/">
                       <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                       Logout
