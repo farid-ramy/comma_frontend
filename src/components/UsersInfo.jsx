@@ -1,49 +1,64 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { ShowFailedAlert } from "../utilities/toastify";
+import { ShowSuccessAlert, ShowWarningAlert } from "../utilities/toastify";
 
 export default function UsersInfo(props) {
   const URL = props.url;
   const { userId } = useParams();
   const [user, setUser] = useState({});
+  const [reset, setReset] = useState(false);
+  const [reload, setReload] = useState(false);
 
-  const [newFirstName, setNewFirstName] = useState("");
-  const [newLastName, setNewLastName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [newPhone, setNewPhone] = useState("");
-  const [newJob, setNewJob] = useState("");
-  const [newAge, setNewAge] = useState("");
-  const [newAddress, setNewAddress] = useState("");
-  const [newNationalId, setNewNationalId] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(`${URL}/users/get_users/${userId}`);
-        setUser(res.data);
-      } catch (error) {
-        ShowFailedAlert(error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [job, setJob] = useState("");
+  const [national_id, setNationalId] = useState("");
+  const [address, setAddress] = useState("");
 
   useEffect(() => {
-    setNewFirstName(user.first_name);
-    setNewLastName(user.last_name);
-    setNewEmail(user.email);
-    setNewPhone(user.phone);
-    setNewJob(user.job);
-    setNewAge(user.age);
-    setNewAddress(user.address);
-    setNewNationalId(user.national_id);
-  }, [user]);
+    axios(`${URL}/users/get_users/${userId}`)
+      .then((res) => setUser(res.data))
+      .catch((err) =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  }, [reload]);
 
-  async function handleUpdate(e) {
+  useEffect(() => {
+    setFirstName(user.first_name || "");
+    setLastName(user.last_name || "");
+    setEmail(user.email || "");
+    setPhone(user.phone || "");
+    setJob(user.job || "");
+    setNationalId(user.national_id || "");
+    setAddress(user.address || "");
+  }, [user, reset]);
+
+  const handleUpdate = (e) => {
     e.preventDefault();
-  }
+    axios
+      .put(`${URL}/users/update/${user.id}`, {
+        first_name,
+        last_name,
+        role: user.role,
+        email: email || null,
+        phone: phone || null,
+        job: job || null,
+        national_id: national_id || null,
+        address: address || null,
+      })
+      .then((res) => {
+        if (!res.data.id)
+          return ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+        ShowSuccessAlert("User updated successfully");
+        setReload(!reload);
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  };
 
   return (
     <div className="container">
@@ -60,7 +75,7 @@ export default function UsersInfo(props) {
                         type="text"
                         className="form-control"
                         id="id"
-                        value={user.id ?? ""}
+                        value={user.id || ""}
                         disabled
                       />
                     </div>
@@ -72,76 +87,95 @@ export default function UsersInfo(props) {
                         type="text"
                         className="form-control"
                         id="role"
-                        value={user.role ?? ""}
+                        value={user.role || ""}
                         disabled
                       />
                     </div>
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div className="form-group">
-                      <label htmlFor="firstName">First Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="firstName"
-                        placeholder="Enter First Name"
-                        value={newFirstName}
-                        onChange={(e) => setNewFirstName(e.target.value.trim())}
-                      />
-                    </div>
+                  <div className="form-group col-6">
+                    <label htmlFor="firstName">First Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="firstName"
+                      value={first_name}
+                      onChange={(e) => setFirstName(e.target.value.trim())}
+                    />
                   </div>
-                  <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div className="form-group">
-                      <label htmlFor="lastName">Last Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="lastName"
-                        placeholder="Enter Last Name"
-                        value={newLastName}
-                        onChange={(e) => setNewLastName(e.target.value.trim())}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div className="form-group">
-                      <label htmlFor="email">Email</label>
-                      <input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        placeholder="Enter Email"
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value.trim())}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div className="form-group">
-                      <label htmlFor="phone">Phone</label>
-                      <input
-                        type="tel"
-                        className="form-control"
-                        id="phone"
-                        placeholder="Enter Phone"
-                        value={newPhone}
-                        onChange={(e) => setNewPhone(e.target.value.trim())}
-                      />
-                    </div>
+                  <div className="form-group col-6">
+                    <label htmlFor="lastName">Last Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="lastName"
+                      value={last_name}
+                      onChange={(e) => setLastName(e.target.value.trim())}
+                    />
                   </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="address">Address</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="address"
-                    placeholder="Enter Address"
-                    value={newAddress}
-                    onChange={(e) => setNewAddress(e.target.value.trim())}
-                  />
+                <div className="row">
+                  <div className="form-group col-6">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value.trim())}
+                    />
+                  </div>
+                  <div className="form-group col-6">
+                    <label htmlFor="phone">Phone</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="phone"
+                      value={phone}
+                      onChange={(e) =>
+                        /^\d*$/.test(e.target.value.trim()) &&
+                        setPhone(e.target.value.trim())
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="form-group col-6">
+                    <label htmlFor="job">Job</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="job"
+                      value={job}
+                      onChange={(e) => setJob(e.target.value.trim())}
+                    />
+                  </div>
+                  <div className="form-group col-6">
+                    <label htmlFor="nationalId">National id</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="nationalId"
+                      value={national_id}
+                      onChange={(e) =>
+                        /^\d*$/.test(e.target.value.trim()) &&
+                        setNationalId(e.target.value.trim())
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="form-group">
+                    <label htmlFor="address">Address</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="address"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value.trim())}
+                    />
+                  </div>
                 </div>
                 <div className="row">
                   <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -149,15 +183,16 @@ export default function UsersInfo(props) {
                       <button
                         type="submit"
                         id="submit"
-                        name="submit"
                         className="btn btn-success mx-2"
                       >
                         Update
                       </button>
                       <button
-                        type="reset"
-                        id="submit"
                         className="btn btn-secondary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setReset(!reset);
+                        }}
                       >
                         Cancel
                       </button>
@@ -165,6 +200,33 @@ export default function UsersInfo(props) {
                   </div>
                 </div>
               </form>
+              <hr className="border-5" />
+              <div className="mb-3">
+                <p className="h2">Subscribed Package :</p>
+                <p class="card-text placeholder-glow">
+                  <span class="placeholder col-7"></span>
+                  <span class="placeholder col-4"></span>
+                  <span class="placeholder col-4"></span>
+                  <span class="placeholder col-6"></span>
+                  <span class="placeholder col-8"></span>
+                </p>
+              </div>
+              <div className="mb-3">
+                <p className="h2">History :</p>
+                <p class="card-text placeholder-glow">
+                  <span class="placeholder col-7"></span>
+                  <span class="placeholder col-7"></span>
+                  <span class="placeholder col-4"></span>
+                  <span class="placeholder col-9"></span>
+                  <span class="placeholder col-4"></span>
+                  <span class="placeholder col-11"></span>
+                  <span class="placeholder col-4"></span>
+                  <br />
+                  <span class="placeholder col-5"></span>
+                  <span class="placeholder col-12"></span>
+                  <span class="placeholder col-8"></span>
+                </p>
+              </div>
             </div>
           </div>
         </div>

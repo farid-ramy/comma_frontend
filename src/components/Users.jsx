@@ -52,13 +52,13 @@ export default function Users(props) {
         .catch((error) => ShowFailedAlert(error));
   }
 
-  function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!first_name || !last_name)
       return ShowWarningAlert("Fill all the important fields");
 
     axios
-      .post(`${URL}/users/ad`, {
+      .post(`${URL}/users/add`, {
         first_name,
         last_name,
         role,
@@ -79,7 +79,7 @@ export default function Users(props) {
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
       );
-  }
+  };
 
   return (
     <div className="container-fluid">
@@ -127,12 +127,27 @@ export default function Users(props) {
                         {user.first_name} {user.last_name}
                       </Link>
                     </td>
-                    <td>{user.phone || "-"}</td>
-                    <td>{user.email || "-"}</td>
+                    <td>
+                      {user.phone ? "***" : "-"}
+                      <span className="d-none">{user.phone}</span>
+                    </td>
+                    <td>
+                      {user.email ? "***" : "-"}
+                      <span className="d-none">{user.email}</span>
+                    </td>
                     <td>{user.role}</td>
-                    <td>{user.job ? user.job.slice(0, 5) + "..." : "-"}</td>
-                    <td>{user.address ? user.address.slice(0) + ".." : "-"}</td>
-                    <td>{user.national_id ? "***" : "-"}</td>
+                    <td>
+                      {user.job ? user.job.slice(0, 5) + "..." : "-"}
+                      <span className="d-none">{user.job}</span>
+                    </td>
+                    <td>
+                      {user.address ? user.address.slice(0) + ".." : "-"}
+                      <span className="d-none">{user.address}</span>
+                    </td>
+                    <td>
+                      {user.national_id ? "***" : "-"}
+                      <span className="d-none">{user.national_id}</span>
+                    </td>
                     <td>
                       <button
                         className="text-danger border-0 bg-color bg-transparent"
