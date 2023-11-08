@@ -8,21 +8,13 @@ export default function Dashboard(props) {
   const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
 
   const [users, setUsers] = useState([]);
-  const [packages, setPackages] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(`${URL}/users/get_users`);
-        setUsers(res.data);
-        const res2 = await axios.get(`${URL}/packages`);
-        setPackages(res2.data);
-      } catch (error) {
-        ShowWarningAlert("Please check your connection or try again later");
-      }
-    };
-
-    fetchData();
+    axios(`${URL}/users/get_users`)
+      .then((res) => setUsers(res.data))
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
   }, []);
 
   return (

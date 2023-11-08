@@ -11,16 +11,11 @@ export default function AdminNavbar(props) {
   const [branches, setBranches] = useState([]);
 
   useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const res = await axios.get(`${URL}/branches`);
-        setBranches(res.data);
-      } catch (error) {
-        ShowFailedAlert(error);
-      }
-    };
-
-    fetchBranches();
+    axios(`${URL}/branches`)
+      .then((res) => setBranches(res.data))
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
   }, [props.reload]);
 
   return (
@@ -106,7 +101,7 @@ export default function AdminNavbar(props) {
                   aria-expanded="false"
                 >
                   <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                    {/* {loggedInUser.first_name} {loggedInUser.last_name} */}
+                    {loggedInUser.first_name} {loggedInUser.last_name}
                   </span>
                   <img
                     className="img-profile rounded-circle"

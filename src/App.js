@@ -56,6 +56,7 @@ export default function App() {
           <Route path="admin" element={<AdminNavbar url={URL} />}>
             <Route path="checkedIn" element={<CheckedIn url={URL} />} />
             <Route path="users" element={<Users url={URL} />} />
+            <Route path="user_info/:userId" element={<UsersInfo url={URL} />} />
             <Route path="packages" element={<Packages url={URL} />} />
             <Route path="branch" element={<Branch url={URL} />} />
           </Route>
@@ -64,6 +65,7 @@ export default function App() {
             <Route path="dashboard" element={<ManagerDashboard url={URL} />} />
             <Route path="checkedIn" element={<CheckedIn url={URL} />} />
             <Route path="users" element={<Users url={URL} />} />
+            <Route path="user_info/:userId" element={<UsersInfo url={URL} />} />
             <Route path="packages" element={<Packages url={URL} />} />
             <Route path="branch" element={<Branch url={URL} />} />
           </Route>

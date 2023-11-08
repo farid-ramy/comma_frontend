@@ -31,7 +31,7 @@ export default function Login(props) {
         return;
       } else {
         setLoggedInUser(res.data);
-        localStorage.setItem("loggedInUser", res.data);
+        localStorage.setItem("loggedInUser", JSON.stringify(res.data));
         navigate(`/${res.data.role}`);
       }
     } catch (err) {

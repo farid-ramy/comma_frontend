@@ -203,28 +203,28 @@ export default function UsersInfo(props) {
               <hr className="border-5" />
               <div className="mb-3">
                 <p className="h2">Subscribed Package :</p>
-                <p class="card-text placeholder-glow">
-                  <span class="placeholder col-7"></span>
-                  <span class="placeholder col-4"></span>
-                  <span class="placeholder col-4"></span>
-                  <span class="placeholder col-6"></span>
-                  <span class="placeholder col-8"></span>
+                <p className="card-text placeholder-glow">
+                  <span className="placeholder col-7"></span>
+                  <span className="placeholder col-4"></span>
+                  <span className="placeholder col-4"></span>
+                  <span className="placeholder col-6"></span>
+                  <span className="placeholder col-8"></span>
                 </p>
               </div>
               <div className="mb-3">
                 <p className="h2">History :</p>
-                <p class="card-text placeholder-glow">
-                  <span class="placeholder col-7"></span>
-                  <span class="placeholder col-7"></span>
-                  <span class="placeholder col-4"></span>
-                  <span class="placeholder col-9"></span>
-                  <span class="placeholder col-4"></span>
-                  <span class="placeholder col-11"></span>
-                  <span class="placeholder col-4"></span>
+                <p className="card-text placeholder-glow">
+                  <span className="placeholder col-7"></span>
+                  <span className="placeholder col-7"></span>
+                  <span className="placeholder col-4"></span>
+                  <span className="placeholder col-9"></span>
+                  <span className="placeholder col-4"></span>
+                  <span className="placeholder col-11"></span>
+                  <span className="placeholder col-4"></span>
                   <br />
-                  <span class="placeholder col-5"></span>
-                  <span class="placeholder col-12"></span>
-                  <span class="placeholder col-8"></span>
+                  <span className="placeholder col-5"></span>
+                  <span className="placeholder col-12"></span>
+                  <span className="placeholder col-8"></span>
                 </p>
               </div>
             </div>

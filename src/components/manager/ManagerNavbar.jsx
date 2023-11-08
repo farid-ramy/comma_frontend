@@ -2,26 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import pp from "../../img/undraw_profile.svg";
 import { Link, Outlet } from "react-router-dom";
 import { LoggedInUserContext } from "../../App";
-import axios from "axios";
-import { ShowFailedAlert, ShowWarningAlert } from "../../utilities/toastify";
 
 export default function AdminNavbar(props) {
   const URL = props.url;
   const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
-  const [branches, setBranches] = useState([]);
-
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const res = await axios.get(`${URL}/branches`);
-        setBranches(res.data);
-      } catch (error) {
-        ShowFailedAlert(error);
-      }
-    };
-
-    fetchBranches();
-  }, [props.reload]);
 
   return (
     <div id="wrapper">
