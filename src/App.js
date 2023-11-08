@@ -70,7 +70,6 @@ export default function App() {
             <Route path="branch" element={<Branch url={URL} />} />
           </Route>
         </Route>
-
         <Route path="*" element={<NotFound404 />} />
       </Routes>
     </LoggedInUserContext.Provider>

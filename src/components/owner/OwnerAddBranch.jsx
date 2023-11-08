@@ -8,26 +8,9 @@ import {
 
 export default function AddBranch(props) {
   const URL = props.url;
-  const [employees, setEmployees] = useState();
-
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
-  const [employee_id, setEmployee_id] = useState("");
-  const [opening_hours, setOpening_hours] = useState("");
-
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const res = await axios.get(`${URL}/users/get_users/employees`);
-        setEmployees(res.data);
-      } catch (error) {
-        ShowFailedAlert(error);
-      }
-    };
-
-    fetchBranches();
-  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -40,7 +23,6 @@ export default function AddBranch(props) {
         name,
         address,
         phone,
-        employee_id: employee_id ? employee_id : null,
       });
       if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
       else {
@@ -95,24 +77,6 @@ export default function AddBranch(props) {
                   }
                 }}
               />
-            </div>
-            <div className="mb-3 col-3">
-              <label htmlFor="select">Employee</label>
-              <select
-                className="form-select"
-                aria-label="Default select example"
-                onChange={(e) => setEmployee_id(e.target.value.trim())}
-              >
-                <option value={""}>None</option>
-                {employees
-                  ? employees.map((employee) => (
-                      <option value={employee.id} key={employee.id}>
-                        {employee.first_name + " " + employee.last_name}
-                      </option>
-                    ))
-                  : null}
-                ;
-              </select>
             </div>
             <div className="mb-3">
               <div className="col-4 d-flex justify-content-between">

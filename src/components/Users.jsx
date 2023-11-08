@@ -86,7 +86,7 @@ export default function Users(props) {
   };
 
   return (
-    <div className="container-fluid">
+    <div>
       <div className="d-flex flex-row-reverse">
         <button
           type="button"
