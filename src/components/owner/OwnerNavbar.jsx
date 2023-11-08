@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import pp from "../../img/undraw_profile.svg";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { LoggedInUserContext } from "../../App";
 import axios from "axios";
-import { ShowFailedAlert, ShowWarningAlert } from "../../utilities/toastify";
+import { ShowWarningAlert } from "../../utilities/toastify";
 
 export default function AdminNavbar(props) {
   const URL = props.url;
   const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
+  const navigate = useNavigate();
   const [branches, setBranches] = useState([]);
 
   useEffect(() => {
@@ -117,10 +118,16 @@ export default function AdminNavbar(props) {
                     <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                     Settings
                   </Link>
-                  <Link className="dropdown-item" to="/">
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      localStorage.clear();
+                      navigate("/");
+                    }}
+                  >
                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     Logout
-                  </Link>
+                  </button>
                 </div>
               </li>
             </ul>

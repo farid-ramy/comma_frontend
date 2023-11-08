@@ -1,11 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import pp from "../../img/undraw_profile.svg";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useFetcher } from "react-router-dom";
 import { LoggedInUserContext } from "../../App";
 
 export default function AdminNavbar(props) {
   const URL = props.url;
   const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
+
+  useEffect(() => {
+    console.log(loggedInUser);
+  }, []);
 
   return (
     <div id="wrapper">
@@ -63,7 +67,7 @@ export default function AdminNavbar(props) {
                   aria-expanded="false"
                 >
                   <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                    {/* {loggedInUser.first_name} {loggedInUser.last_name} */}
+                    {loggedInUser.first_name} {loggedInUser.last_name}
                   </span>
                   <img
                     className="img-profile rounded-circle"

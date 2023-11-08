@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { LoggedInUserContext } from "../App";
+
 import axios from "axios";
 import { Link } from "react-router-dom";
 import $ from "jquery";
@@ -10,6 +12,8 @@ import {
 
 export default function Users(props) {
   const URL = props.url;
+  const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
+
   const [usersData, setUsersData] = useState([]);
   const [reload, setReload] = useState(false);
 
@@ -116,48 +120,57 @@ export default function Users(props) {
                 </tr>
               </thead>
               <tbody>
-                {usersData.slice(1).map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.id}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>
-                      <Link
-                        className="text-dark"
-                        to={`../user_info/${user.id}`}
-                      >
-                        {user.first_name} {user.last_name}
-                      </Link>
-                    </td>
-                    <td>
-                      {user.phone ? "***" : "-"}
-                      <span className="d-none">{user.phone}</span>
-                    </td>
-                    <td>
-                      {user.email ? "***" : "-"}
-                      <span className="d-none">{user.email}</span>
-                    </td>
-                    <td>{user.role}</td>
-                    <td>
-                      {user.job ? user.job.slice(0, 5) + "..." : "-"}
-                      <span className="d-none">{user.job}</span>
-                    </td>
-                    <td>
-                      {user.address ? user.address.slice(0) + ".." : "-"}
-                      <span className="d-none">{user.address}</span>
-                    </td>
-                    <td>
-                      {user.national_id ? "***" : "-"}
-                      <span className="d-none">{user.national_id}</span>
-                    </td>
-                    <td>
-                      <button
-                        className="text-danger border-0 bg-color bg-transparent"
-                        onClick={() => handleDeleteBtn(user)}
-                      >
-                        <i className="fa-solid fa-trash-can"></i>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {usersData
+                  .filter((user) => {
+                    if (
+                      user.role !== "owner" &&
+                      loggedInUser.role !== user.role &&
+                      (loggedInUser.role !== "admin" || user.role === "client")
+                    )
+                      return user;
+                  })
+                  .map((user) => (
+                    <tr key={user.id}>
+                      <td>{user.id}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
+                        <Link
+                          className="text-dark"
+                          to={`../user_info/${user.id}`}
+                        >
+                          {user.first_name} {user.last_name}
+                        </Link>
+                      </td>
+                      <td>
+                        {user.phone ? "***" : "-"}
+                        <span className="d-none">{user.phone}</span>
+                      </td>
+                      <td>
+                        {user.email ? "***" : "-"}
+                        <span className="d-none">{user.email}</span>
+                      </td>
+                      <td>{user.role}</td>
+                      <td>
+                        {user.job ? user.job.slice(0, 5) + "..." : "-"}
+                        <span className="d-none">{user.job}</span>
+                      </td>
+                      <td>
+                        {user.address ? user.address.slice(0) + ".." : "-"}
+                        <span className="d-none">{user.address}</span>
+                      </td>
+                      <td>
+                        {user.national_id ? "***" : "-"}
+                        <span className="d-none">{user.national_id}</span>
+                      </td>
+                      <td>
+                        <button
+                          className="text-danger border-0 bg-color bg-transparent"
+                          onClick={() => handleDeleteBtn(user)}
+                        >
+                          <i className="fa-solid fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
@@ -197,9 +210,18 @@ export default function Users(props) {
                       className="form-select"
                       onChange={(e) => setRole(e.target.value.trim())}
                     >
-                      <option value="client">client</option>
-                      <option value="admin">Admin</option>
-                      <option value="manager">Manager</option>
+                      {["client", "admin", "manager"]
+                        .filter((role) => {
+                          if (
+                            role !== "owner" &&
+                            loggedInUser.role !== role &&
+                            (loggedInUser.role !== "admin" || role === "client")
+                          )
+                            return role;
+                        })
+                        .map((role) => (
+                          <option value={role}>{role}</option>
+                        ))}
                     </select>
                   </div>
                 </div>

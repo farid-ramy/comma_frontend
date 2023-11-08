@@ -32,6 +32,8 @@ export default function App() {
   return (
     <LoggedInUserContext.Provider value={{ loggedInUser, setLoggedInUser }}>
       <Routes>
+        <Route path="/" element={<Login url={URL} />} />
+
         <Route element={<PrivateRoutes />}>
           <Route
             path="owner"
@@ -52,7 +54,6 @@ export default function App() {
               }
             />
           </Route>
-
           <Route path="admin" element={<AdminNavbar url={URL} />}>
             <Route path="checkedIn" element={<CheckedIn url={URL} />} />
             <Route path="users" element={<Users url={URL} />} />
@@ -60,7 +61,6 @@ export default function App() {
             <Route path="packages" element={<Packages url={URL} />} />
             <Route path="branch" element={<Branch url={URL} />} />
           </Route>
-
           <Route path="manager" element={<ManagerNavbar url={URL} />}>
             <Route path="dashboard" element={<ManagerDashboard url={URL} />} />
             <Route path="checkedIn" element={<CheckedIn url={URL} />} />
@@ -71,7 +71,6 @@ export default function App() {
           </Route>
         </Route>
 
-        <Route path="/" element={<Login url={URL} />} />
         <Route path="*" element={<NotFound404 />} />
       </Routes>
     </LoggedInUserContext.Provider>
