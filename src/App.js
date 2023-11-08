@@ -2,15 +2,15 @@ import { Route, Routes } from "react-router-dom";
 
 import Login from "./pages/Login";
 import NotFound404 from "./pages/NotFound404";
-import AdminNavbar from "./components/admin/AdminNavbar";
-import Dashboard from "./components/admin/Dashboard";
+import AdminNavbar from "./components/owner/AdminNavbar";
+import Dashboard from "./components/owner/Dashboard";
 import Users from "./components/Users";
-import Packages from "./components/admin/Packages";
-import AddBranch from "./components/admin/AddBranch";
+import Packages from "./components/owner/Packages";
+import AddBranch from "./components/owner/AddBranch";
 import UsersInfo from "./components/UsersInfo";
-import EmployeeNavbar from "./components/employee/EmployeeNavbar";
-import CheckedIn from "./components/employee/CheckedIn";
-import Branch from "./components/employee/Branch";
+import EmployeeNavbar from "./components/admin/EmployeeNavbar";
+import CheckedIn from "./components/admin/CheckedIn";
+import Branch from "./components/admin/Branch";
 import { createContext, useState } from "react";
 import PrivateRoutes from "./utilities/PrivateRoutes";
 
@@ -27,7 +27,7 @@ export default function App() {
       <Routes>
         <Route element={<PrivateRoutes />}>
           <Route
-            path="admin"
+            path="owner"
             element={<AdminNavbar url={URL} reload={reload} />}
           >
             <Route path="dashboard" element={<Dashboard url={URL} />} />
@@ -41,7 +41,7 @@ export default function App() {
               }
             />
           </Route>
-          <Route path="employee" element={<EmployeeNavbar url={URL} />}>
+          <Route path="admin" element={<EmployeeNavbar url={URL} />}>
             <Route path="checkedIn" element={<CheckedIn url={URL} />} />
             <Route path="users" element={<Users url={URL} />} />
             <Route path="branch" element={<Branch url={URL} />} />

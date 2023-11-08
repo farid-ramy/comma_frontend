@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import $ from "jquery";
 import {
   ShowFailedAlert,
   ShowSuccessAlert,
@@ -28,7 +29,11 @@ export default function Packages(props) {
         price: price,
       });
       if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
-      else setReload(!reload);
+      else {
+        setReload(!reload);
+        $("#exampleModal").modal("hide");
+        $("#myForm")[0].reset();
+      }
     } catch (error) {
       ShowFailedAlert(error);
     }
@@ -67,9 +72,7 @@ export default function Packages(props) {
         .catch((error) => ShowFailedAlert(error));
   };
 
-  const handleUpdate = (pkg) => {
-    
-  };
+  const handleUpdate = (pkg) => {};
 
   return (
     <div className="container-fluid">
@@ -161,7 +164,7 @@ export default function Packages(props) {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} id="myForm">
               <div className="modal-body">
                 <div className="form-row">
                   <div className="form-group col-md-6">
@@ -197,15 +200,17 @@ export default function Packages(props) {
                     />
                   </div>
                 </div>
-                <div className="form-group col-md-12">
-                  <label htmlFor="floatingTextarea2">Description</label>
-                  <textarea
-                    className="form-control"
-                    placeholder="Description.."
-                    id="floatingTextarea2"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value.trim())}
-                  ></textarea>
+                <div className="row">
+                  <div className="form-group col-md-12">
+                    <label htmlFor="floatingTextarea2">Description</label>
+                    <textarea
+                      className="form-control"
+                      placeholder="Description.."
+                      id="floatingTextarea2"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value.trim())}
+                    ></textarea>
+                  </div>
                 </div>
               </div>
               <div className="modal-footer">

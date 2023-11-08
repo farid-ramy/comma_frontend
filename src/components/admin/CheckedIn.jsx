@@ -7,7 +7,9 @@ export default function CheckedIn(props) {
   const URL = props.url;
   const [input, setInput] = useState("");
   const [users, setUsers] = useState("");
+  const [checkedInUsers, setCheckedInUsers] = useState("");
   const [results, setResults] = useState([]);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,13 +42,36 @@ export default function CheckedIn(props) {
     if (results) setResults(results);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios(`${URL}/history`);
+        setCheckedInUsers(res.data);
+      } catch (error) {
+        ShowWarningAlert(error);
+      }
+    };
+
+    fetchData();
+  }, [reload]);
+
   const handleChange = (value) => {
     setInput(value);
     if (value) fetchData(value);
-    else setResults([]);
+    else setResults(!reload);
   };
 
-  const handleStart = async (x) => {};
+  const handleStart = async (user_id) => {
+    try {
+      const res = await axios.post(`${URL}/history/checkin/${user_id}/1`);
+      if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+      else {
+        setResults(!reload);
+      }
+    } catch (error) {
+      ShowWarningAlert(error);
+    }
+  };
 
   return (
     <div>

@@ -34,20 +34,20 @@ export default function AdminNavbar(props) {
         </div>
         <hr className="sidebar-divider my-0" />
         <li className="nav-item">
-          <Link className="nav-link" to="/admin/dashboard">
+          <Link className="nav-link" to="/owner/dashboard">
             <i className="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
           </Link>
         </li>
         <hr className="sidebar-divider" />
         <li className="nav-item">
-          <Link className="nav-link" to="/admin/users">
+          <Link className="nav-link" to="/owner/users">
             <i className="fa-solid fa-users"></i>
             <span>Users</span>
           </Link>
         </li>
         <li className="nav-item">
-          <Link className="nav-link" to="/admin/packages">
+          <Link className="nav-link" to="/owner/packages">
             <i className="fa-solid fa-cube"></i>
             <span>Packages</span>
           </Link>
@@ -70,7 +70,7 @@ export default function AdminNavbar(props) {
             data-parent="#accordionSidebar"
           >
             <div className="bg-white py-2 collapse-inner rounded">
-              <Link className="collapse-item" to="/admin/add_branch">
+              <Link className="collapse-item" to="/owner/add_branch">
                 + Add
               </Link>
 
@@ -80,7 +80,7 @@ export default function AdminNavbar(props) {
                   {branches.map((branch) => (
                     <Link
                       className="collapse-item"
-                      to={`/admin/branch/${branch.id}`}
+                      to={`/owner/branch/${branch.id}`}
                       key={branch.id}
                     >
                       {branch.name}
