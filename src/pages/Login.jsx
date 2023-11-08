@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ShowFailedAlert, ShowWarningAlert } from "../utilities/toastify";
+import useAuth from "../hooks/useAuth";
 
 export default function Login(props) {
   const URL = props.url;
+  const { setLoggedInUser } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -27,10 +29,12 @@ export default function Login(props) {
         ShowFailedAlert(res.data.error);
         return;
       } else {
+        setLoggedInUser(res.data);
         localStorage.setItem("loggedInUser", JSON.stringify(res.data));
         navigate(`/${res.data.role}`);
       }
     } catch (err) {
+      console.log(err);
       ShowWarningAlert("Please check your connection or try again later");
     }
   }

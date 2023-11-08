@@ -41,13 +41,14 @@ export default function App() {
               <OwnerAddBranch url={URL} reload={reload} setReload={setReload} />
             }
           />
+          <Route path="branch/branch:Id" element={<Branch url={URL} />} />
         </Route>
         <Route path="admin" element={<AdminNavbar url={URL} />}>
           <Route path="checkedIn" element={<CheckedIn url={URL} />} />
           <Route path="users" element={<Users url={URL} />} />
           <Route path="user_info/:userId" element={<UsersInfo url={URL} />} />
           <Route path="packages" element={<Packages url={URL} />} />
-          <Route path="branch" element={<Branch url={URL} />} />
+          <Route path="branch/branch:Id" element={<Branch url={URL} />} />
         </Route>
         <Route path="manager" element={<ManagerNavbar url={URL} />}>
           <Route path="dashboard" element={<ManagerDashboard url={URL} />} />
@@ -55,7 +56,7 @@ export default function App() {
           <Route path="users" element={<Users url={URL} />} />
           <Route path="user_info/:userId" element={<UsersInfo url={URL} />} />
           <Route path="packages" element={<Packages url={URL} />} />
-          <Route path="branch" element={<Branch url={URL} />} />
+          <Route path="branch/branch:Id" element={<Branch url={URL} />} />
         </Route>
       </Route>
 

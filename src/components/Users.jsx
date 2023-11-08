@@ -219,7 +219,7 @@ export default function Users(props) {
                             return role;
                         })
                         .map((role) => (
-                          <option value={role}>{role}</option>
+                          <option value={role} key={role}>{role}</option>
                         ))}
                     </select>
                   </div>

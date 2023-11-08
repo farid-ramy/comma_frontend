@@ -3,7 +3,7 @@ import pp from "../../img/undraw_profile.svg";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
-export default function AdminNavbar(props) {
+export default function ManagerNavbar(props) {
   const URL = props.url;
   const { loggedInUser } = useAuth();
   const navigate = useNavigate();

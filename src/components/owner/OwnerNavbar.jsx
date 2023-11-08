@@ -5,7 +5,7 @@ import axios from "axios";
 import { ShowWarningAlert } from "../../utilities/toastify";
 import useAuth from "../../hooks/useAuth";
 
-export default function AdminNavbar(props) {
+export default function OwnerNavbar(props) {
   const URL = props.url;
   const navigate = useNavigate();
   const [branches, setBranches] = useState([]);
