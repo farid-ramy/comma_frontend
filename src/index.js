@@ -1,6 +1,6 @@
+import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import App from "./App";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./vendor/fontawesome-free/css/all.min.css";
 import "./css/sb-admin-2.css";
@@ -13,12 +13,19 @@ import "./vendor/jquery-easing/jquery.easing.min.js";
 import "./vendor/datatables/jquery.dataTables.min.js";
 import "./vendor/datatables/dataTables.bootstrap4.min.js";
 import "./js/demo/datatables-demo.js";
+import { AuthProvider } from "./context/AuthProvider";
 import { ToastContainer } from "react-toastify";
+import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <BrowserRouter>
-    <App />
-    <ToastContainer />
-  </BrowserRouter>
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+        <ToastContainer />
+      </AuthProvider>
+      <ToastContainer />
+    </BrowserRouter>
+  </React.StrictMode>
 );

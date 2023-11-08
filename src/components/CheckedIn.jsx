@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import { LoggedInUserContext } from "../App";
 
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -9,11 +8,11 @@ import {
   ShowFailedAlert,
   ShowWarningAlert,
 } from "../utilities/toastify";
+import useAuth from "../hooks/useAuth";
 
 export default function CheckedIn(props) {
   const URL = props.url;
-  const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
-
+  const { loggedInUser } = useAuth();
   const [usersData, setUsersData] = useState([]);
   const [reload, setReload] = useState(false);
 

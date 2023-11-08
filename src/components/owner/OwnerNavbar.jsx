@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import pp from "../../img/undraw_profile.svg";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { LoggedInUserContext } from "../../App";
 import axios from "axios";
 import { ShowWarningAlert } from "../../utilities/toastify";
+import useAuth from "../../hooks/useAuth";
 
 export default function AdminNavbar(props) {
   const URL = props.url;
-  const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
   const navigate = useNavigate();
   const [branches, setBranches] = useState([]);
+  const { loggedInUser } = useAuth();
 
   useEffect(() => {
     axios(`${URL}/branches`)
@@ -104,7 +104,7 @@ export default function AdminNavbar(props) {
                   aria-expanded="false"
                 >
                   <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                    {/* {loggedInUser.first_name} {loggedInUser.last_name} */}
+                    {loggedInUser.first_name} {loggedInUser.last_name}
                   </span>
                   <img
                     className="img-profile rounded-circle"

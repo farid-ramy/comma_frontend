@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { LoggedInUserContext } from "../../App";
 import axios from "axios";
 import { ShowWarningAlert } from "../../utilities/toastify";
 
 export default function Dashboard(props) {
   const URL = props.url;
-  const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
 
   const [users, setUsers] = useState([]);
   const [packages, setPackages] = useState([]);

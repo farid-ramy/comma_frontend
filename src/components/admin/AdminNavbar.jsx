@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import pp from "../../img/undraw_profile.svg";
 import { Link, Outlet } from "react-router-dom";
-import { LoggedInUserContext } from "../../App";
+import useAuth from "../../hooks/useAuth";
 
 export default function AdminNavbar(props) {
   const URL = props.url;
-  const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
+  const { loggedInUser } = useAuth();
 
   return (
     <div id="wrapper">

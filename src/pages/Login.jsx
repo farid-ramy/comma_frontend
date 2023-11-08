@@ -1,13 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { LoggedInUserContext } from "../App";
+import useAuth from "../hooks/useAuth";
 import { ShowFailedAlert, ShowWarningAlert } from "../utilities/toastify";
 
 export default function Login(props) {
   const URL = props.url;
-  const { loggedInUser, setLoggedInUser } = useContext(LoggedInUserContext);
-
+  const { setLoggedInUser } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -30,7 +29,6 @@ export default function Login(props) {
         ShowFailedAlert(res.data.error);
         return;
       } else {
-        setLoggedInUser(res.data);
         localStorage.setItem("loggedInUser", JSON.stringify(res.data));
         navigate(`/${res.data.role}`);
       }
