@@ -5,7 +5,7 @@ import {
   ShowFailedAlert,
   ShowSuccessAlert,
   ShowWarningAlert,
-} from "../../utilities/toastify";
+} from "../utilities/toastify";
 
 export default function Packages(props) {
   const URL = props.url;

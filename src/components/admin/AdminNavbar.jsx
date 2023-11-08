@@ -32,69 +32,29 @@ export default function AdminNavbar(props) {
         <div className="sidebar-brand d-flex align-items-center justify-content-center">
           Comma
         </div>
-        <hr className="sidebar-divider my-0" />
-        <li className="nav-item">
-          <Link className="nav-link" to="/owner/dashboard">
-            <i className="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-          </Link>
-        </li>
         <hr className="sidebar-divider" />
         <li className="nav-item">
-          <Link className="nav-link" to="/owner/users">
+          <Link className="nav-link" to="./checkedIn">
+            <i className="fa-solid fa-check"></i>
+            <span>Checked in</span>
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="./users">
             <i className="fa-solid fa-users"></i>
             <span>Users</span>
           </Link>
         </li>
         <li className="nav-item">
-          <Link className="nav-link" to="/owner/packages">
+          <Link className="nav-link" to="./packages">
             <i className="fa-solid fa-cube"></i>
             <span>Packages</span>
           </Link>
         </li>
         <li className="nav-item">
-          <span
-            className="nav-link collapsed"
-            data-toggle="collapse"
-            data-target="#collapsePages"
-            aria-expanded="true"
-            aria-controls="collapsePages"
-          >
+          <Link className="nav-link" to="./branch">
             <i className="fa-solid fa-building"></i>
-            <span> Branches</span>
-          </span>
-          <div
-            id="collapsePages"
-            className="collapse"
-            aria-labelledby="headingPages"
-            data-parent="#accordionSidebar"
-          >
-            <div className="bg-white py-2 collapse-inner rounded">
-              <Link className="collapse-item" to="/owner/add_branch">
-                + Add
-              </Link>
-
-              {branches.length > 0 ? (
-                <div>
-                  <h6 className="collapse-header">current branches:</h6>
-                  {branches.map((branch) => (
-                    <Link
-                      className="collapse-item"
-                      to={`/owner/branch/${branch.id}`}
-                      key={branch.id}
-                    >
-                      {branch.name}
-                    </Link>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </li>
-        <li className="nav-item">
-          <Link className="nav-link" to="">
-            <i className="fas fa-fw fa-chart-area"></i>
-            <span>Charts</span>
+            <span>Branch</span>
           </Link>
         </li>
       </ul>
