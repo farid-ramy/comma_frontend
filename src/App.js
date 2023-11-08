@@ -18,7 +18,7 @@ import ManagerNavbar from "./components/manager/ManagerNavbar";
 import ManagerDashboard from "./components/manager/ManagerDashboard";
 
 import AdminNavbar from "./components/admin/AdminNavbar";
-import RequireAuth from "./components/RequireAuth";
+import RequireAuth from "./utilities/RequireAuth";
 
 const URL = "http://127.0.0.1:8000/api";
 

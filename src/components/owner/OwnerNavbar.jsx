@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import pp from "../../img/undraw_profile.svg";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -123,7 +123,7 @@ export default function AdminNavbar(props) {
                   <button
                     className="dropdown-item"
                     onClick={() => {
-                      localStorage.clear();
+                      localStorage.removeItem("loggedInUser");
                       navigate("/");
                     }}
                   >

@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import pp from "../../img/undraw_profile.svg";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
 export default function AdminNavbar(props) {
   const URL = props.url;
   const { loggedInUser } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div id="wrapper">
@@ -72,10 +73,16 @@ export default function AdminNavbar(props) {
                     <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                     Settings
                   </Link>
-                  <Link className="dropdown-item" to="/">
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      localStorage.removeItem("loggedInUser");
+                      navigate("/");
+                    }}
+                  >
                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     Logout
-                  </Link>
+                  </button>
                 </div>
               </li>
             </ul>
