@@ -140,7 +140,7 @@ export default function Users(props) {
                         </Link>
                       </td>
                       <td>
-                        {user.phone ? "***" : "-"}
+                        {user.phone ? "*****" + user.phone.slice(-4) : "-"}
                         <span className="d-none">{user.phone}</span>
                       </td>
                       <td>
@@ -219,7 +219,9 @@ export default function Users(props) {
                             return role;
                         })
                         .map((role) => (
-                          <option value={role} key={role}>{role}</option>
+                          <option value={role} key={role}>
+                            {role}
+                          </option>
                         ))}
                     </select>
                   </div>

@@ -1,23 +1,20 @@
-import React, { useEffect, useState, useContext } from "react";
-
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import $ from "jquery";
-import {
-  ShowSuccessAlert,
-  ShowFailedAlert,
-  ShowWarningAlert,
-} from "../utilities/toastify";
+import { ShowWarningAlert } from "../utilities/toastify";
 import useAuth from "../hooks/useAuth";
 
 export default function CheckedIn(props) {
   const URL = props.url;
   const { loggedInUser } = useAuth();
   const [usersData, setUsersData] = useState([]);
+  const [input, setInput] = useState("");
+  const [results, setResults] = useState([]);
   const [reload, setReload] = useState(false);
 
   useEffect(() => {
-    axios(`${URL}/users/get_users`)
+    axios(`${URL}/users/get_users/clients`)
       .then((res) => setUsersData(res.data))
       .then(() => {
         $(document).ready(function () {
@@ -29,18 +26,102 @@ export default function CheckedIn(props) {
       );
   }, [reload]);
 
+  const fetchData = async (value) => {
+    const results = usersData.filter((user) => {
+      return (
+        user.id.toString()?.toLowerCase()?.includes(value) ||
+        false ||
+        user.first_name?.toLowerCase()?.includes(value) ||
+        false ||
+        user.last_name?.toLowerCase()?.includes(value) ||
+        false ||
+        user.phone?.toLowerCase()?.includes(value) ||
+        false ||
+        user.national_id?.toLowerCase()?.includes(value) ||
+        false
+      );
+    });
+    if (results) setResults(results);
+  };
+
+  const handleChange = (value) => {
+    setInput(value);
+    if (value) fetchData(value);
+    else setResults([]);
+  };
+
+  const handleStart = (user) => {
+    console.log(user);
+  };
+
   return (
     <div>
-      <div className="input-group col-4 mb-5 container">
-        <input
-          type="text"
-          placeholder=" Search.. "
-          className="form-control"
-          style={{ borderRadius: "5px 0 0 5px" }}
-        />
-        <button type="button" className="btn btn-success">
-          <i className="fas fa-search"></i>
-        </button>
+      <div
+        className="position-relative mb-3"
+        id="search"
+        style={{ width: "50%", margin: " 0 auto" }}
+      >
+        <div className="input-group">
+          <input
+            type="text"
+            placeholder=" Search.. "
+            className="form-control rounded-0"
+            value={input}
+            onChange={(e) => handleChange(e.target.value.trim())}
+          />
+          <button type="button" className="btn btn-success rounded-0">
+            <i className="fas fa-search"></i>
+          </button>
+        </div>
+        {results.length > 0 && (
+          <div
+            className="position-absolute"
+            style={{
+              maxHeight: "300px",
+              overflow: "scroll",
+              zIndex: "2",
+              top: "100%",
+              left: "50%",
+              width: "100%",
+              transform: "translateX(-50%)",
+              boxShadow: "0px 2px 2px rgba(0,0,0,0.45)",
+            }}
+          >
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">National Id</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map((user) => {
+                  return (
+                    <tr key={user.id}>
+                      <th scope="row">{user.id}</th>
+                      <td>{user.first_name + " " + user.last_name}</td>
+                      <td>
+                        {user.phone ? "*****" + user.phone.slice(-4) : "-"}
+                      </td>
+                      <td>{user.national_id ?? "-"}</td>
+                      <td>
+                        <button
+                          className="btn btn-success"
+                          onClick={() => handleStart(user)}
+                        >
+                          Start
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       <div className="card shadow mb-4">

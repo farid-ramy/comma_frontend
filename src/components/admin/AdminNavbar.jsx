@@ -37,7 +37,7 @@ export default function AdminNavbar(props) {
           </Link>
         </li>
         <li className="nav-item">
-          <Link className="nav-link" to="./branch">
+          <Link className="nav-link" to="./branch/1">
             <i className="fa-solid fa-building"></i>
             <span>Branch</span>
           </Link>
