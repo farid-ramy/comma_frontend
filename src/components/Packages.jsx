@@ -40,16 +40,11 @@ export default function Packages(props) {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(`${URL}/packages`);
-        setPackages(res.data);
-      } catch (error) {
-        ShowFailedAlert(error);
-      }
-    };
-
-    fetchData();
+    axios(`${URL}/packages`)
+      .then((res) => setPackages(res.data))
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
   }, [reload]);
 
   async function viewPackage(pkg) {

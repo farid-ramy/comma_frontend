@@ -23,7 +23,7 @@ export default function CheckedIn(props) {
   }, []);
 
   useEffect(() => {
-    axios(`${URL}/history?branch_id=${loggedInUser.branch_id}`)
+    axios(`${URL}/history/filter?branch_id=${loggedInUser.branch_id}`)
       .then((res) => setcheckedInUsers(res.data))
       .then(() => {
         $(document).ready(function () {
@@ -60,15 +60,42 @@ export default function CheckedIn(props) {
   };
 
   const handleStart = (user) => {
-    console.log(user);
+    axios
+      .post(`${URL}/history/check_in`, {
+        client_id: user.id,
+        employee_id: loggedInUser.id,
+        branch_id: loggedInUser.branch_id,
+      })
+      .then((res) => {
+        if (res.error) ShowWarningAlert(res.error);
+        handleChange("");
+        setReload(!reload);
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
   };
 
   const handleStopBtn = (user) => {
     console.log(user);
   };
 
-  const handleDeleteBtn = (user) => {
-    console.log(user);
+  const handleDeleteBtn = (checkedInRecord) => {
+    if (
+      window.confirm(
+        `Are you should you want to delete ${checkedInRecord.client_id.first_name} ${checkedInRecord.client_id.last_name} ?`
+      )
+    ) {
+      axios
+        .delete(`${URL}/history/${checkedInRecord.id}/delete`)
+        .then((res) => {
+          if (res.error) ShowWarningAlert(res.error);
+          setReload(!reload);
+        })
+        .catch(() =>
+          ShowWarningAlert("Please check your connection or try again later")
+        );
+    }
   };
 
   return (
