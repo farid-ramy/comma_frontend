@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 import axios from "axios";
 import { ShowFailedAlert, ShowWarningAlert } from "../utilities/toastify";
-import useAuth from "../hooks/useAuth";
 
 export default function Login(props) {
   const URL = props.url;
@@ -12,7 +12,7 @@ export default function Login(props) {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!username || !password)
       return ShowWarningAlert("Please fill all the fields");
@@ -33,7 +33,7 @@ export default function Login(props) {
       .catch((err) =>
         ShowWarningAlert("Please check your connection or try again later")
       );
-  }
+  };
 
   return (
     <div className="container">

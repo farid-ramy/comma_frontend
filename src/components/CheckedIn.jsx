@@ -23,7 +23,7 @@ export default function CheckedIn(props) {
   }, []);
 
   useEffect(() => {
-    axios(`${URL}/history/filter?branch_id=${loggedInUser.branch_id}`)
+    axios(`${URL}/history/filter?branch_id=${loggedInUser.branch_id}&check_out_time=true`)
       .then((res) => setcheckedInUsers(res.data))
       .then(() => {
         $(document).ready(function () {
@@ -76,8 +76,18 @@ export default function CheckedIn(props) {
       );
   };
 
-  const handleStopBtn = (user) => {
-    console.log(user);
+  const handleStopBtn = (checkedInRecord) => {
+    axios
+      .put(`${URL}/history/${checkedInRecord.id}/check_out`, {
+        payment: 100,
+      })
+      .then((res) => {
+        if (res.error) ShowWarningAlert(res.error);
+        setReload(!reload);
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
   };
 
   const handleDeleteBtn = (checkedInRecord) => {

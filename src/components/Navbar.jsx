@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import pp from "../img/undraw_profile.svg";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 import axios from "axios";
 import { ShowWarningAlert } from "../utilities/toastify";
-import useAuth from "../hooks/useAuth";
+import pp from "../img/undraw_profile.svg";
 
 export default function Navbar(props) {
   const URL = props.url;
-  const navigate = useNavigate();
-  const [branches, setBranches] = useState([]);
   const { loggedInUser } = useAuth();
+  const [branches, setBranches] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios(`${URL}/branches`)

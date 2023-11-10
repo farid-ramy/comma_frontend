@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
-import $ from "jquery";
+import useAuth from "../hooks/useAuth";
+import axios from "axios";
 import {
   ShowSuccessAlert,
   ShowFailedAlert,
   ShowWarningAlert,
 } from "../utilities/toastify";
-import useAuth from "../hooks/useAuth";
+import $ from "jquery";
 
 export default function Users(props) {
   const URL = props.url;
   const { loggedInUser } = useAuth();
 
   const [usersData, setUsersData] = useState([]);
-  const [reload, setReload] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const [role, setRole] = useState("client");
   const [first_name, setFirstName] = useState("");
@@ -36,9 +36,9 @@ export default function Users(props) {
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
       );
-  }, [reload]);
+  }, [refresh]);
 
-  function handleDeleteBtn(user) {
+  const handleDeleteBtn = (user) => {
     if (
       window.confirm(
         `Are you should you want to delete ${user.first_name} ${user.last_name} ?`
@@ -47,13 +47,13 @@ export default function Users(props) {
       axios
         .delete(`${URL}/users/${user.id}/delete`)
         .then(() => {
-          setReload(!reload);
+          setRefresh(!refresh);
           ShowSuccessAlert(
             `${user.first_name + " " + user.last_name} was deleted successfully`
           );
         })
         .catch((error) => ShowFailedAlert(error));
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -75,7 +75,7 @@ export default function Users(props) {
         if (!res.data.id)
           return ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
         ShowSuccessAlert("User added successfully");
-        setReload(!reload);
+        setRefresh(!refresh);
         $("#exampleModal").modal("hide");
         $("#myForm")[0].reset();
       })
