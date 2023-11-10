@@ -7,36 +7,32 @@ import useAuth from "../hooks/useAuth";
 export default function Login(props) {
   const URL = props.url;
   const { setLoggedInUser } = useAuth();
+  const [eye, setEye] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const navigate = useNavigate();
 
-  async function handleLogin(e) {
+  function handleSubmit(e) {
     e.preventDefault();
-    if (!username || !password) {
-      ShowWarningAlert("Please fill all the fields");
-      return;
-    }
+    if (!username || !password)
+      return ShowWarningAlert("Please fill all the fields");
 
-    try {
-      const res = await axios.post(`${URL}/users/login`, {
+    axios
+      .post(`${URL}/users/login`, {
         username,
         password,
-      });
-
-      if (res.data.error) {
-        ShowFailedAlert(res.data.error);
-        return;
-      } else {
-        setLoggedInUser(res.data);
-        localStorage.setItem("loggedInUser", JSON.stringify(res.data));
-        navigate(`/${res.data.role}`);
-      }
-    } catch (err) {
-      console.log(err);
-      ShowWarningAlert("Please check your connection or try again later");
-    }
+      })
+      .then((res) => {
+        if (res.data.error) return ShowFailedAlert(res.data.error);
+        else {
+          setLoggedInUser(res.data);
+          localStorage.setItem("loggedInUser", JSON.stringify(res.data));
+          navigate(`/${res.data.role}`);
+        }
+      })
+      .catch((err) =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
   }
 
   return (
@@ -56,7 +52,7 @@ export default function Login(props) {
                     </div>
                     <br />
                     <br />
-                    <form className="user" onSubmit={handleLogin}>
+                    <form className="user" onSubmit={handleSubmit}>
                       <div className="form-group">
                         <input
                           type="text"
@@ -66,7 +62,7 @@ export default function Login(props) {
                           onChange={(e) => setUsername(e.target.value.trim())}
                         />
                       </div>
-                      <div className="form-group">
+                      <div className="form-group position-relative">
                         <input
                           type="password"
                           className="form-control form-control-user"
@@ -74,6 +70,25 @@ export default function Login(props) {
                           placeholder="Password"
                           onChange={(e) => setPassword(e.target.value.trim())}
                         />
+                        <i
+                          className={`fa-solid position-absolute ${
+                            eye ? "fa-eye" : "fa-eye-slash"
+                          }`}
+                          style={{
+                            right: "20px",
+                            top: "40%",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            setEye(!eye);
+                            const passwordInput = document.getElementById(
+                              "exampleInputPassword"
+                            );
+                            if (passwordInput.type === "password")
+                              passwordInput.type = "text";
+                            else passwordInput.type = "password";
+                          }}
+                        ></i>
                       </div>
                       <br />
                       <br />
