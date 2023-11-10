@@ -7,7 +7,7 @@ export default function Dashboard(props) {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios(`${URL}/users/get_users`)
+    axios(`${URL}/users/get`)
       .then((res) => setUsers(res.data))
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")

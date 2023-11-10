@@ -9,13 +9,22 @@ export default function CheckedIn(props) {
   const URL = props.url;
   const { loggedInUser } = useAuth();
   const [usersData, setUsersData] = useState([]);
+  const [checkedInUsers, setcheckedInUsers] = useState([]);
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [reload, setReload] = useState(false);
 
   useEffect(() => {
-    axios(`${URL}/users/get_users/clients`)
+    axios(`${URL}/users/get?role=client`)
       .then((res) => setUsersData(res.data))
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  }, []);
+
+  useEffect(() => {
+    axios(`${URL}/history?branch_id=${loggedInUser.branch_id}`)
+      .then((res) => setcheckedInUsers(res.data))
       .then(() => {
         $(document).ready(function () {
           $("#dataTable").DataTable();
@@ -51,6 +60,14 @@ export default function CheckedIn(props) {
   };
 
   const handleStart = (user) => {
+    console.log(user);
+  };
+
+  const handleStopBtn = (user) => {
+    console.log(user);
+  };
+
+  const handleDeleteBtn = (user) => {
     console.log(user);
   };
 
@@ -98,7 +115,7 @@ export default function CheckedIn(props) {
                 </tr>
               </thead>
               <tbody>
-                {results.map((user) => {
+                {usersData.map((user) => {
                   return (
                     <tr key={user.id}>
                       <th scope="row">{user.id}</th>
@@ -139,65 +156,59 @@ export default function CheckedIn(props) {
                   <th>Name</th>
                   <th>Phone</th>
                   <th>Email</th>
-                  <th>Role</th>
-                  <th>Job</th>
-                  <th>Address</th>
-                  <th>National id</th>
+                  <th>Check In</th>
+                  <th>Check out</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                {usersData
-                  .filter((user) => {
-                    if (
-                      user.role !== "owner" &&
-                      loggedInUser.role !== user.role &&
-                      (loggedInUser.role !== "admin" || user.role === "client")
-                    )
-                      return user;
-                  })
-                  .map((user) => (
-                    <tr key={user.id}>
-                      <td>{user.id}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Link
-                          className="text-dark"
-                          to={`../user_info/${user.id}`}
-                        >
-                          {user.first_name} {user.last_name}
-                        </Link>
-                      </td>
-                      <td>
-                        {user.phone ? "***" : "-"}
-                        <span className="d-none">{user.phone}</span>
-                      </td>
-                      <td>
-                        {user.email ? "***" : "-"}
-                        <span className="d-none">{user.email}</span>
-                      </td>
-                      <td>{user.role}</td>
-                      <td>
-                        {user.job ? user.job.slice(0, 5) + "..." : "-"}
-                        <span className="d-none">{user.job}</span>
-                      </td>
-                      <td>
-                        {user.address ? user.address.slice(0) + ".." : "-"}
-                        <span className="d-none">{user.address}</span>
-                      </td>
-                      <td>
-                        {user.national_id ? "***" : "-"}
-                        <span className="d-none">{user.national_id}</span>
-                      </td>
-                      <td>
-                        <button
-                          className="text-danger border-0 bg-color bg-transparent"
-                          // onClick={() => handleDeleteBtn(user)}
-                        >
-                          <i className="fa-solid fa-trash-can"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                {checkedInUsers.map((checkedInRecord) => (
+                  <tr key={checkedInRecord.client_id.id}>
+                    <td>{checkedInRecord.client_id.id}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Link
+                        className="text-dark"
+                        to={`../user_info/${checkedInRecord.client_id.id}`}
+                      >
+                        {checkedInRecord.client_id.first_name}{" "}
+                        {checkedInRecord.client_id.last_name}
+                      </Link>
+                    </td>
+                    <td>
+                      {checkedInRecord.client_id.phone
+                        ? "*****" + checkedInRecord.client_id.phone.slice(-4)
+                        : "-"}
+                      <span className="d-none">
+                        {checkedInRecord.client_id.phone}
+                      </span>
+                    </td>
+                    <td>
+                      {checkedInRecord.client_id.email ? "***" : "-"}
+                      <span className="d-none">
+                        {checkedInRecord.client_id.email}
+                      </span>
+                    </td>
+                    <td>
+                      {new Date(checkedInRecord.check_in_time).toLocaleString()}
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleStopBtn(checkedInRecord)}
+                      >
+                        Stop
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className="text-danger border-0 bg-color bg-transparent"
+                        onClick={() => handleDeleteBtn(checkedInRecord)}
+                      >
+                        <i className="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

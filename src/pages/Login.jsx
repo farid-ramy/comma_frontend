@@ -20,7 +20,7 @@ export default function Login(props) {
     }
 
     try {
-      const res = await axios.post(`${URL}/users/handel_login`, {
+      const res = await axios.post(`${URL}/users/login`, {
         username,
         password,
       });

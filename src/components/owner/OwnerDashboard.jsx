@@ -11,7 +11,7 @@ export default function Dashboard(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${URL}/users/get_users`);
+        const res = await axios.get(`${URL}/users/get`);
         setUsers(res.data);
         const res2 = await axios.get(`${URL}/packages`);
         setPackages(res2.data);

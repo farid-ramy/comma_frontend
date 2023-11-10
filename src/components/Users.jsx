@@ -26,7 +26,7 @@ export default function Users(props) {
   const [address, setAddress] = useState("");
 
   useEffect(() => {
-    axios(`${URL}/users/get_users`)
+    axios(`${URL}/users/get`)
       .then((res) => setUsersData(res.data))
       .then(() => {
         $(document).ready(function () {
@@ -45,7 +45,7 @@ export default function Users(props) {
       )
     )
       axios
-        .delete(`${URL}/users/delete/${user.id}`)
+        .delete(`${URL}/users/${user.id}/delete`)
         .then(() => {
           setReload(!reload);
           ShowSuccessAlert(
@@ -61,7 +61,7 @@ export default function Users(props) {
       return ShowWarningAlert("Fill all the important fields");
 
     axios
-      .post(`${URL}/users/add`, {
+      .post(`${URL}/users/create`, {
         first_name,
         last_name,
         role,

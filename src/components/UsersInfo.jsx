@@ -19,7 +19,7 @@ export default function UsersInfo(props) {
   const [address, setAddress] = useState("");
 
   useEffect(() => {
-    axios(`${URL}/users/get_users/${userId}`)
+    axios(`${URL}/users/${userId}`)
       .then((res) => setUser(res.data))
       .catch((err) =>
         ShowWarningAlert("Please check your connection or try again later")
@@ -39,7 +39,7 @@ export default function UsersInfo(props) {
   const handleUpdate = (e) => {
     e.preventDefault();
     axios
-      .put(`${URL}/users/update/${user.id}`, {
+      .put(`${URL}/users/${user.id}/update`, {
         first_name,
         last_name,
         role: user.role,

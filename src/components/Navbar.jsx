@@ -1,12 +1,25 @@
-import React from "react";
-import pp from "../../img/undraw_profile.svg";
+import React, { useEffect, useState } from "react";
+import pp from "../img/undraw_profile.svg";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import axios from "axios";
+import { ShowWarningAlert } from "../utilities/toastify";
+import useAuth from "../hooks/useAuth";
 
-export default function ManagerNavbar(props) {
+export default function Navbar(props) {
   const URL = props.url;
-  const { loggedInUser } = useAuth();
   const navigate = useNavigate();
+  const [branches, setBranches] = useState([]);
+  const { loggedInUser } = useAuth();
+
+  useEffect(() => {
+    axios(`${URL}/branches`)
+      .then((res) => {
+        setBranches(res.data);
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  }, [props.reload]);
 
   return (
     <div id="wrapper">
@@ -18,19 +31,22 @@ export default function ManagerNavbar(props) {
           Comma
         </div>
         <hr className="sidebar-divider my-0" />
-        <li className="nav-item">
-          <Link className="nav-link" to="./dashboard">
-            <i className="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-          </Link>
-        </li>
-        <hr className="sidebar-divider" />
-        <li className="nav-item">
-          <Link className="nav-link" to="./checkedIn">
-            <i className="fa-solid fa-check"></i>
-            <span>Checked in</span>
-          </Link>
-        </li>
+        {loggedInUser.role === "owner" || loggedInUser.role === "manager" ? (
+          <li className="nav-item">
+            <Link className="nav-link" to="./dashboard">
+              <i className="fas fa-fw fa-tachometer-alt"></i>
+              <span>Dashboard</span>
+            </Link>
+          </li>
+        ) : null}
+        {loggedInUser.role === "manager" || loggedInUser.role === "admin" ? (
+          <li className="nav-item">
+            <Link className="nav-link" to="./checkedIn">
+              <i className="fa-solid fa-check"></i>
+              <span>Checked in</span>
+            </Link>
+          </li>
+        ) : null}
         <li className="nav-item">
           <Link className="nav-link" to="./users">
             <i className="fa-solid fa-users"></i>
@@ -43,12 +59,57 @@ export default function ManagerNavbar(props) {
             <span>Packages</span>
           </Link>
         </li>
-        <li className="nav-item">
-          <Link className="nav-link" to="./branch/1">
-            <i className="fa-solid fa-building"></i>
-            <span>Branch</span>
-          </Link>
-        </li>
+        {loggedInUser.role === "owner" ? (
+          <li className="nav-item">
+            <span
+              className="nav-link collapsed"
+              data-toggle="collapse"
+              data-target="#collapsePages"
+              aria-expanded="true"
+              aria-controls="collapsePages"
+            >
+              <i className="fa-solid fa-building"></i>
+              <span> Branches</span>
+            </span>
+            <div
+              id="collapsePages"
+              className="collapse"
+              aria-labelledby="headingPages"
+              data-parent="#accordionSidebar"
+            >
+              <div className="bg-white py-2 collapse-inner rounded">
+                <Link className="collapse-item" to="./add_branch">
+                  + Add
+                </Link>
+
+                {branches.length > 0 ? (
+                  <div>
+                    <h6 className="collapse-header">current branches:</h6>
+                    {branches.map((branch) => (
+                      <Link
+                        className="collapse-item"
+                        to={`./branch/${branch.id}`}
+                        key={branch.id}
+                      >
+                        {branch.name}
+                      </Link>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </li>
+        ) : (
+          <li className="nav-item">
+            <Link
+              className="nav-link"
+              to={`./branch/${loggedInUser.branch_id}`}
+            >
+              <i className="fa-solid fa-building"></i>
+              <span>Branch</span>
+            </Link>
+          </li>
+        )}
       </ul>
       <div id="content-wrapper" className="d-flex flex-column">
         <div id="content">
