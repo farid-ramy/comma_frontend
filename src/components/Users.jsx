@@ -29,9 +29,10 @@ export default function Users(props) {
     axios(`${URL}/users/get`)
       .then((res) => setUsersData(res.data))
       .then(() => {
-        $(document).ready(function () {
+        setTimeout(() => {
           $("#dataTable").DataTable();
-        });
+          console.log('x')
+        }, 50);
       })
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
