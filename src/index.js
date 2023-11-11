@@ -19,13 +19,11 @@ import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <App />
-        <ToastContainer />
-      </AuthProvider>
+  <BrowserRouter>
+    <AuthProvider>
+      <App />
       <ToastContainer />
-    </BrowserRouter>
-  </React.StrictMode>
+    </AuthProvider>
+    <ToastContainer />
+  </BrowserRouter>
 );
