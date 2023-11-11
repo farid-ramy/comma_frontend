@@ -16,6 +16,13 @@ export default function Packages(props) {
   const [description, setDescription] = useState("");
   const [packages, setPackages] = useState([]);
   const [viewingPackage, setViewingPackage] = useState(null);
+  const [updateData, setUpdateData] = useState({
+    name: '',
+    price: 0,
+    description: '',
+  });
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
+
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -40,7 +47,7 @@ export default function Packages(props) {
   }
 
   useEffect(() => {
-    axios(`${URL}/packages`)
+    axios(`${URL}/packages/getpackages`)
       .then((res) => setPackages(res.data))
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
@@ -67,7 +74,30 @@ export default function Packages(props) {
         .catch((error) => ShowFailedAlert(error));
   };
 
-  const handleUpdate = (pkg) => {};
+  const handleUpdate = (pkg) => {
+    axios
+      .put(`${URL}/packages/update/${viewingPackage.id}`, updateData)
+      .then(() => {
+        setReload(!reload);
+        ShowSuccessAlert(`${viewingPackage.name} was updated successfully`);
+        closeView();
+      })
+      .catch((error) => ShowFailedAlert(error));
+  };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUpdateData({
+      ...updateData,
+      [name]: value,
+    });
+  };
+
+  const handleUpdateSubmit = (e) => {
+    e.preventDefault();
+    handleUpdate();
+  };
+
+
 
   return (
     <div className="container-fluid">
@@ -144,6 +174,7 @@ export default function Packages(props) {
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >
+
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             <div className="modal-header">
@@ -219,6 +250,8 @@ export default function Packages(props) {
             </form>
           </div>
         </div>
+
+
       </div>
     </div>
   );
