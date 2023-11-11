@@ -8,6 +8,7 @@ import {
   ShowWarningAlert,
 } from "../utilities/toastify";
 import $ from "jquery";
+import "datatables.net";
 
 export default function Users(props) {
   const URL = props.url;
@@ -27,11 +28,13 @@ export default function Users(props) {
 
   useEffect(() => {
     axios(`${URL}/users/get`)
-      .then((res) => setUsersData(res.data))
+      .then((res) => {
+        if ($.fn.dataTable.isDataTable("#dataTable"))
+          $("#dataTable").DataTable().destroy();
+        setUsersData(res.data);
+      })
       .then(() => {
-        $(document).ready(function () {
-          $("#dataTable").DataTable();
-        });
+        setTimeout(() => $("#dataTable").DataTable(), 10);
       })
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")

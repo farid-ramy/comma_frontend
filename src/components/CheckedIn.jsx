@@ -13,6 +13,7 @@ export default function CheckedIn(props) {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [reload, setReload] = useState(false);
+  const [payment, setpayment] = useState(0);
 
   useEffect(() => {
     axios(`${URL}/users/get?role=client`)
@@ -23,7 +24,9 @@ export default function CheckedIn(props) {
   }, []);
 
   useEffect(() => {
-    axios(`${URL}/history/filter?branch_id=${loggedInUser.branch_id}&check_out_time=true`)
+    axios(
+      `${URL}/history/filter?branch_id=${loggedInUser.branch_id}&check_out_time=true`
+    )
       .then((res) => setcheckedInUsers(res.data))
       .then(() => {
         $(document).ready(function () {
@@ -79,7 +82,7 @@ export default function CheckedIn(props) {
   const handleStopBtn = (checkedInRecord) => {
     axios
       .put(`${URL}/history/${checkedInRecord.id}/check_out`, {
-        payment: 100,
+        payment,
       })
       .then((res) => {
         if (res.error) ShowWarningAlert(res.error);
@@ -110,6 +113,71 @@ export default function CheckedIn(props) {
 
   return (
     <div>
+      <div
+        className="modal fade"
+        id="exampleModal"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                Check out
+              </h5>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="myForm">
+              <div className="modal-body">
+                <div className="row">
+                  <div className="form-group">
+                    <label htmlFor="payment">Payment</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="payment"
+                      value={payment}
+                      onChange={(e) =>
+                        /^\d*$/.test(e.target.value.trim()) &&
+                        setpayment(e.target.value.trim())
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="submit"
+                  className="btn btn-success"
+                  // onClick={() => handleStopBtn(checkedInRecord)}
+                >
+                  Check out
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    $("#exampleModal").modal("hide");
+                    $("#myForm")[0].reset();
+                  }}
+                  className="btn btn-secondary"
+                >
+                  cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
       <div
         className="position-relative mb-3"
         id="search"
@@ -177,7 +245,6 @@ export default function CheckedIn(props) {
           </div>
         )}
       </div>
-
       <div className="card shadow mb-4">
         <div className="card-body">
           <div className="table-responsive">
@@ -231,7 +298,9 @@ export default function CheckedIn(props) {
                     <td>
                       <button
                         className="btn btn-danger"
-                        onClick={() => handleStopBtn(checkedInRecord)}
+                        type="button"
+                        data-toggle="modal"
+                        data-target="#exampleModal"
                       >
                         Stop
                       </button>
