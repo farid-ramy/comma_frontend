@@ -25,14 +25,14 @@ export default function CheckedIn(props) {
 
   useEffect(() => {
     axios(
-      `${URL}/history/filter?branch_id=${loggedInUser.branch_id}&check_out_time=true`
+      `${URL}/history/filter?branch_id=${loggedInUser.branch.id}&check_out_time=true`
     )
-      .then((res) => setcheckedInUsers(res.data))
-      .then(() => {
-        $(document).ready(function () {
-          $("#dataTable").DataTable();
-        });
+      .then((res) => {
+        if ($.fn.dataTable.isDataTable("#dataTable"))
+          $("#dataTable").DataTable().destroy();
+        setcheckedInUsers(res.data);
       })
+      .then(() => setTimeout(() => $("#dataTable").DataTable(), 10))
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
       );

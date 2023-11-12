@@ -19,7 +19,7 @@ export default function UsersInfo(props) {
   const [address, setAddress] = useState("");
 
   useEffect(() => {
-    axios(`${URL}/users/${userId}`)
+    axios(`${URL}/users/get/${userId}`)
       .then((res) => setUser(res.data))
       .catch((err) =>
         ShowWarningAlert("Please check your connection or try again later")
@@ -40,13 +40,13 @@ export default function UsersInfo(props) {
     e.preventDefault();
     axios
       .put(`${URL}/users/${user.id}/update`, {
+        role: user.role,
         first_name,
         last_name,
-        role: user.role,
-        email: email || null,
         phone: phone || null,
-        job: job || null,
+        email: email || null,
         national_id: national_id || null,
+        job: job || null,
         address: address || null,
       })
       .then((res) => {
@@ -88,6 +88,18 @@ export default function UsersInfo(props) {
                         className="form-control"
                         id="role"
                         value={user.role || ""}
+                        disabled
+                      />
+                    </div>
+                  </div>
+                  <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div className="form-group">
+                      <label htmlFor="createAt">Create at</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="createAt"
+                        value={new Date(user.created_at).toLocaleString()}
                         disabled
                       />
                     </div>

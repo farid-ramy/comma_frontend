@@ -18,6 +18,8 @@ export default function Users(props) {
   const [refresh, setRefresh] = useState(false);
 
   const [role, setRole] = useState("client");
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -62,17 +64,24 @@ export default function Users(props) {
     e.preventDefault();
     if (!first_name || !last_name)
       return ShowWarningAlert("Fill all the important fields");
-
+    if (role === "client") {
+      setUserName("");
+      setPassword("");
+    }
     axios
       .post(`${URL}/users/create`, {
+        role,
         first_name,
         last_name,
-        role,
-        email: email || null,
+        username,
+        password,
         phone: phone || null,
-        job: job || null,
+        email: email || null,
         national_id: national_id || null,
+        job: job || null,
         address: address || null,
+        branch: loggedInUser.role === "owner" ? null : loggedInUser.branch.id,
+        created_by: loggedInUser.id,
       })
       .then((res) => {
         if (!res.data.id)
@@ -89,16 +98,18 @@ export default function Users(props) {
 
   return (
     <div>
-      <div className="d-flex flex-row-reverse">
-        <button
-          type="button"
-          className="btn btn-secondary mb-3"
-          data-toggle="modal"
-          data-target="#exampleModal"
-        >
-          + Add User
-        </button>
-      </div>
+      {loggedInUser.branch || loggedInUser.role === "owner" ? (
+        <div className="d-flex flex-row-reverse">
+          <button
+            type="button"
+            className="btn btn-secondary mb-3"
+            data-toggle="modal"
+            data-target="#exampleModal"
+          >
+            + Add User
+          </button>
+        </div>
+      ) : null}
       <div className="card shadow mb-4">
         <div className="card-body">
           <div className="table-responsive">
@@ -229,6 +240,28 @@ export default function Users(props) {
                     </select>
                   </div>
                 </div>
+                {role !== "client" && (
+                  <div className="row">
+                    <div className="form-group col-6">
+                      <label htmlFor="userName">Username</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="userName"
+                        onChange={(e) => setUserName(e.target.value.trim())}
+                      />
+                    </div>
+                    <div className="form-group col-6">
+                      <label htmlFor="password">Password</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="password"
+                        onChange={(e) => setPassword(e.target.value.trim())}
+                      />
+                    </div>
+                  </div>
+                )}
                 <div className="row">
                   <div className="form-group col-6">
                     <label htmlFor="firstName">

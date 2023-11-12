@@ -7,6 +7,7 @@ import "./css/sb-admin-2.css";
 import "./vendor/datatables/dataTables.bootstrap4.min.css";
 import "react-toastify/dist/ReactToastify.css";
 
+import "bootstrap/dist/js/bootstrap.js";
 import "./vendor/jquery/jquery.min.js";
 import "./vendor/bootstrap/js/bootstrap.bundle.min.js";
 import "./vendor/jquery-easing/jquery.easing.min.js";
