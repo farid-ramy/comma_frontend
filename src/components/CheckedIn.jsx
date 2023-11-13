@@ -13,7 +13,8 @@ export default function CheckedIn(props) {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [reload, setReload] = useState(false);
-  const [payment, setpayment] = useState(0);
+  const [payment, setPayment] = useState(0);
+  const [checkedInRecord, setCheckedInRecord] = useState({});
 
   useEffect(() => {
     axios(`${URL}/users/get?role=client`)
@@ -25,7 +26,9 @@ export default function CheckedIn(props) {
 
   useEffect(() => {
     if (loggedInUser.branch)
-      axios(`${URL}/history?branch_id=${loggedInUser.branch.id} `)
+      axios(
+        `${URL}/history?branch_id=${loggedInUser.branch.id}&check_out_time=null`
+      )
         .then((res) => {
           if ($.fn.dataTable.isDataTable("#dataTable"))
             $("#dataTable").DataTable().destroy();
@@ -80,14 +83,17 @@ export default function CheckedIn(props) {
       );
   };
 
-  const handleStopBtn = (checkedInRecord) => {
+  const handleCheckOutBtn = (e) => {
+    e.preventDefault();
     axios
-      .put(`${URL}/history/${checkedInRecord.id}/check_out`, {
+      .put(`${URL}/history/${checkedInRecord.id}/update`, {
+        check_out_time: new Date().toISOString(),
         payment,
       })
       .then((res) => {
         if (res.error) ShowWarningAlert(res.error);
         setReload(!reload);
+        $("#exampleModal").modal("hide");
       })
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
@@ -137,7 +143,7 @@ export default function CheckedIn(props) {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form id="myForm">
+            <form id="myForm" onSubmit={(e) => handleCheckOutBtn(e)}>
               <div className="modal-body">
                 <div className="row">
                   <div className="form-group">
@@ -149,18 +155,14 @@ export default function CheckedIn(props) {
                       value={payment}
                       onChange={(e) =>
                         /^\d*$/.test(e.target.value.trim()) &&
-                        setpayment(e.target.value.trim())
+                        setPayment(e.target.value.trim())
                       }
                     />
                   </div>
                 </div>
               </div>
               <div className="modal-footer">
-                <button
-                  type="submit"
-                  className="btn btn-success"
-                  // onClick={() => handleStopBtn(checkedInRecord)}
-                >
+                <button type="submit" className="btn btn-success">
                   Check out
                 </button>
                 <button
@@ -207,10 +209,9 @@ export default function CheckedIn(props) {
               left: "50%",
               width: "100%",
               transform: "translateX(-50%)",
-              boxShadow: "0px 2px 2px rgba(0,0,0,0.45)",
             }}
           >
-            <table className="table table-hover">
+            <table className="table" style={{boxShadow: "0px 0px 10px gray"}}>
               <thead>
                 <tr>
                   <th scope="col">Id</th>
@@ -221,7 +222,7 @@ export default function CheckedIn(props) {
                 </tr>
               </thead>
               <tbody>
-                {usersData.map((user) => {
+                {results.map((user) => {
                   return (
                     <tr key={user.id}>
                       <th scope="row">{user.id}</th>
@@ -302,6 +303,7 @@ export default function CheckedIn(props) {
                         type="button"
                         data-toggle="modal"
                         data-target="#exampleModal"
+                        onClick={() => setCheckedInRecord(checkedInRecord)}
                       >
                         Stop
                       </button>

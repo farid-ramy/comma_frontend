@@ -30,7 +30,7 @@ export default function Users(props) {
 
   useEffect(() => {
     if (loggedInUser.branch || loggedInUser.role === "owner")
-      axios(`${URL}/users/get`)
+      axios(`${URL}/users/get?role=client`)
         .then((res) => {
           if ($.fn.dataTable.isDataTable("#dataTable"))
             $("#dataTable").DataTable().destroy();
