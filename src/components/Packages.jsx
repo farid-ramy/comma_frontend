@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import useAuth from "../hooks/useAuth";
 import axios from "axios";
 import $ from "jquery";
 import {
@@ -9,6 +10,7 @@ import {
 
 export default function Packages(props) {
   const URL = props.url;
+  const { loggedInUser } = useAuth();
   const [reload, setReload] = useState(false);
 
   const [name, setName] = useState("");
@@ -25,8 +27,9 @@ export default function Packages(props) {
     }
     try {
       const res = await axios.post(`${URL}/packages/create`, {
-        name: name,
-        price: price,
+        name,
+        price,
+        description,
       });
       if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
       else {
@@ -58,7 +61,7 @@ export default function Packages(props) {
   const handleDelete = (pkg) => {
     if (window.confirm(`Are you should you want to delete ${pkg.name} ?`))
       axios
-        .delete(`${URL}/packages/delete/${pkg.id}`)
+        .delete(`${URL}/packages/${pkg.id}/delete`)
         .then(() => {
           setReload(!reload);
           ShowSuccessAlert(`${pkg.name}  was deleted successfully`);
@@ -71,16 +74,18 @@ export default function Packages(props) {
 
   return (
     <div className="container-fluid">
-      <div className="d-flex flex-row-reverse">
-        <button
-          type="button"
-          className="btn btn-secondary mb-3"
-          data-toggle="modal"
-          data-target="#exampleModal"
-        >
-          + Add Package
-        </button>
-      </div>
+      {loggedInUser.role === "owner" && (
+        <div className="d-flex flex-row-reverse">
+          <button
+            type="button"
+            className="btn btn-secondary mb-3"
+            data-toggle="modal"
+            data-target="#exampleModal"
+          >
+            + Add Package
+          </button>
+        </div>
+      )}
       {viewingPackage && (
         <div className="card shadow mb-4">
           <div className="card-body">
@@ -98,8 +103,8 @@ export default function Packages(props) {
               <strong>Price:</strong> ${viewingPackage.price}
             </p>
             <p>
-              <strong>Description:</strong>
-              {viewingPackage.description ?? "-"}
+              <strong>Description: </strong>
+              {viewingPackage.description ? viewingPackage.description : " - "}
             </p>
             <button
               className="btn btn-success mr-2"
