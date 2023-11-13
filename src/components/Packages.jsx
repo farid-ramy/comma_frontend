@@ -24,7 +24,7 @@ export default function Packages(props) {
       return;
     }
     try {
-      const res = await axios.post(`${URL}/packages/add`, {
+      const res = await axios.post(`${URL}/packages/create`, {
         name: name,
         price: price,
       });

@@ -18,8 +18,8 @@ export default function Users(props) {
   const [refresh, setRefresh] = useState(false);
 
   const [role, setRole] = useState("client");
-  const [username, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUserName] = useState(null);
+  const [password, setPassword] = useState(null);
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,18 +29,19 @@ export default function Users(props) {
   const [address, setAddress] = useState("");
 
   useEffect(() => {
-    axios(`${URL}/users/get`)
-      .then((res) => {
-        if ($.fn.dataTable.isDataTable("#dataTable"))
-          $("#dataTable").DataTable().destroy();
-        setUsersData(res.data);
-      })
-      .then(() => {
-        setTimeout(() => $("#dataTable").DataTable(), 10);
-      })
-      .catch(() =>
-        ShowWarningAlert("Please check your connection or try again later")
-      );
+    if (loggedInUser.branch || loggedInUser.role === "owner")
+      axios(`${URL}/users/get`)
+        .then((res) => {
+          if ($.fn.dataTable.isDataTable("#dataTable"))
+            $("#dataTable").DataTable().destroy();
+          setUsersData(res.data);
+        })
+        .then(() => {
+          setTimeout(() => $("#dataTable").DataTable(), 10);
+        })
+        .catch(() =>
+          ShowWarningAlert("Please check your connection or try again later")
+        );
   }, [refresh]);
 
   const handleDeleteBtn = (user) => {
@@ -68,13 +69,16 @@ export default function Users(props) {
       setUserName("");
       setPassword("");
     }
+    if ((username && !password) || (!username && password))
+      return ShowWarningAlert("Fill both username and password");
+
     axios
       .post(`${URL}/users/create`, {
         role,
         first_name,
         last_name,
-        username,
-        password,
+        username: username || null,
+        password: password || null,
         phone: phone || null,
         email: email || null,
         national_id: national_id || null,

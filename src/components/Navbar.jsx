@@ -99,7 +99,7 @@ export default function Navbar(props) {
               </div>
             </div>
           </li>
-        ) : (
+        ) : loggedInUser.branch ? (
           <li className="nav-item">
             <Link
               className="nav-link"
@@ -109,7 +109,7 @@ export default function Navbar(props) {
               <span>Branch</span>
             </Link>
           </li>
-        )}
+        ) : null}
       </ul>
       <div id="content-wrapper" className="d-flex flex-column">
         <div id="content">

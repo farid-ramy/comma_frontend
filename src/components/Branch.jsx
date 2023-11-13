@@ -82,7 +82,7 @@ export default function Branch(props) {
             aria-expanded="false"
             aria-controls="panelsStayOpen-collapseTwo"
           >
-            Users
+            Analysis
           </button>
         </h2>
         <div

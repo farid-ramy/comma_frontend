@@ -24,18 +24,17 @@ export default function CheckedIn(props) {
   }, []);
 
   useEffect(() => {
-    axios(
-      `${URL}/history/filter?branch_id=${loggedInUser.branch.id}&check_out_time=true`
-    )
-      .then((res) => {
-        if ($.fn.dataTable.isDataTable("#dataTable"))
-          $("#dataTable").DataTable().destroy();
-        setcheckedInUsers(res.data);
-      })
-      .then(() => setTimeout(() => $("#dataTable").DataTable(), 10))
-      .catch(() =>
-        ShowWarningAlert("Please check your connection or try again later")
-      );
+    if (loggedInUser.branch)
+      axios(`${URL}/history?branch_id=${loggedInUser.branch.id} `)
+        .then((res) => {
+          if ($.fn.dataTable.isDataTable("#dataTable"))
+            $("#dataTable").DataTable().destroy();
+          setcheckedInUsers(res.data);
+        })
+        .then(() => setTimeout(() => $("#dataTable").DataTable(), 10))
+        .catch(() =>
+          ShowWarningAlert("Please check your connection or try again later")
+        );
   }, [reload]);
 
   const fetchData = async (value) => {
@@ -64,13 +63,15 @@ export default function CheckedIn(props) {
 
   const handleStart = (user) => {
     axios
-      .post(`${URL}/history/check_in`, {
-        client_id: user.id,
-        employee_id: loggedInUser.id,
-        branch_id: loggedInUser.branch_id,
+      .post(`${URL}/history/create`, {
+        client: user.id,
+        employee: loggedInUser.id,
+        branch: loggedInUser.branch.id,
       })
       .then((res) => {
-        if (res.error) ShowWarningAlert(res.error);
+        if (res.data.error) {
+          return ShowWarningAlert(res.data.error);
+        }
         handleChange("");
         setReload(!reload);
       })
@@ -96,7 +97,7 @@ export default function CheckedIn(props) {
   const handleDeleteBtn = (checkedInRecord) => {
     if (
       window.confirm(
-        `Are you should you want to delete ${checkedInRecord.client_id.first_name} ${checkedInRecord.client_id.last_name} ?`
+        `Are you should you want to delete ${checkedInRecord.client.first_name} ${checkedInRecord.client.last_name} ?`
       )
     ) {
       axios
@@ -267,29 +268,29 @@ export default function CheckedIn(props) {
               </thead>
               <tbody>
                 {checkedInUsers.map((checkedInRecord) => (
-                  <tr key={checkedInRecord.client_id.id}>
-                    <td>{checkedInRecord.client_id.id}</td>
+                  <tr key={checkedInRecord.client.id}>
+                    <td>{checkedInRecord.client.id}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
                       <Link
                         className="text-dark"
-                        to={`../user_info/${checkedInRecord.client_id.id}`}
+                        to={`../user_info/${checkedInRecord.client.id}`}
                       >
-                        {checkedInRecord.client_id.first_name}{" "}
-                        {checkedInRecord.client_id.last_name}
+                        {checkedInRecord.client.first_name}{" "}
+                        {checkedInRecord.client.last_name}
                       </Link>
                     </td>
                     <td>
-                      {checkedInRecord.client_id.phone
-                        ? "*****" + checkedInRecord.client_id.phone.slice(-4)
+                      {checkedInRecord.client.phone
+                        ? "*****" + checkedInRecord.client.phone.slice(-4)
                         : "-"}
                       <span className="d-none">
-                        {checkedInRecord.client_id.phone}
+                        {checkedInRecord.client.phone}
                       </span>
                     </td>
                     <td>
-                      {checkedInRecord.client_id.email ? "***" : "-"}
+                      {checkedInRecord.client.email ? "***" : "-"}
                       <span className="d-none">
-                        {checkedInRecord.client_id.email}
+                        {checkedInRecord.client.email}
                       </span>
                     </td>
                     <td>
