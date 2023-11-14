@@ -50,7 +50,7 @@ export default function Packages(props) {
   }
 
   useEffect(() => {
-    axios(`${URL}/packages/getpackages`)
+    axios(`${URL}/packages/`)
       .then((res) => setPackages(res.data))
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
