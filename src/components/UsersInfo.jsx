@@ -18,9 +18,16 @@ export default function UsersInfo(props) {
   const [national_id, setNationalId] = useState("");
   const [address, setAddress] = useState("");
 
+  const [branch, setBranch] = useState({});
+  const [history, setHistory] = useState([]);
+
   useEffect(() => {
-    axios(`${URL}/users/${userId}`)
-      .then((res) => setUser(res.data))
+    axios(`${URL}/users/get/${userId}`)
+      .then((res) => {
+        setUser(res.data);
+        setBranch(res.data.branch);
+        setHistory(res.data.history);
+      })
       .catch((err) =>
         ShowWarningAlert("Please check your connection or try again later")
       );
@@ -40,13 +47,13 @@ export default function UsersInfo(props) {
     e.preventDefault();
     axios
       .put(`${URL}/users/${user.id}/update`, {
+        role: user.role,
         first_name,
         last_name,
-        role: user.role,
-        email: email || null,
         phone: phone || null,
-        job: job || null,
+        email: email || null,
         national_id: national_id || null,
+        job: job || null,
         address: address || null,
       })
       .then((res) => {
@@ -60,6 +67,7 @@ export default function UsersInfo(props) {
       );
   };
 
+  console.log(user);
   return (
     <div className="container">
       <div className="row gutters">
@@ -88,6 +96,30 @@ export default function UsersInfo(props) {
                         className="form-control"
                         id="role"
                         value={user.role || ""}
+                        disabled
+                      />
+                    </div>
+                  </div>
+                  <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div className="form-group">
+                      <label htmlFor="createAt">Create at</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="createAt"
+                        value={new Date(user.created_at).toLocaleString()}
+                        disabled
+                      />
+                    </div>
+                  </div>
+                  <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div className="form-group">
+                      <label htmlFor="createInBranch">Create in branch</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="createInBranch"
+                        value={branch.name}
                         disabled
                       />
                     </div>
@@ -213,19 +245,58 @@ export default function UsersInfo(props) {
               </div>
               <div className="mb-3">
                 <p className="h2">History :</p>
-                <p className="card-text placeholder-glow">
-                  <span className="placeholder col-7"></span>
-                  <span className="placeholder col-7"></span>
-                  <span className="placeholder col-4"></span>
-                  <span className="placeholder col-9"></span>
-                  <span className="placeholder col-4"></span>
-                  <span className="placeholder col-11"></span>
-                  <span className="placeholder col-4"></span>
-                  <br />
-                  <span className="placeholder col-5"></span>
-                  <span className="placeholder col-12"></span>
-                  <span className="placeholder col-8"></span>
-                </p>
+                {history.length > 0 ? (
+                  <table className="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Check in</th>
+                        <th scope="col">Check out</th>
+                        <th scope="col">time</th>
+                        <th scope="col">payment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {history.map((h, index) => {
+                        const checkInTime = new Date(h.check_in_time);
+                        const checkOutTime = new Date(
+                          h.check_out_time != null
+                            ? h.check_out_time
+                            : h.check_in_time
+                        );
+                        console.log(checkOutTime);
+
+                        const timeDifference = new Date(
+                          checkOutTime - checkInTime
+                        );
+
+                        const hours = timeDifference.getUTCHours();
+                        const minutes = timeDifference.getUTCMinutes();
+                        const seconds = timeDifference.getUTCSeconds();
+
+                        const formattedTimeDifference = `${hours
+                          .toString()
+                          .padStart(2, "0")}:${minutes
+                          .toString()
+                          .padStart(2, "0")}:${seconds
+                          .toString()
+                          .padStart(2, "0")}`;
+
+                        return (
+                          <tr key={index}>
+                            <th scope="row">{index + 1}</th>
+                            <td>{checkInTime.toLocaleString()}</td>
+                            <td>{checkOutTime.toLocaleString()}</td>
+                            <td>{formattedTimeDifference}</td>
+                            <td>{h.payment ?? "-"}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                ) : (
+                  "No history found."
+                )}
               </div>
             </div>
           </div>

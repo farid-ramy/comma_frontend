@@ -99,17 +99,17 @@ export default function Navbar(props) {
               </div>
             </div>
           </li>
-        ) : (
+        ) : loggedInUser.branch ? (
           <li className="nav-item">
             <Link
               className="nav-link"
-              to={`./branch/${loggedInUser.branch_id}`}
+              to={`./branch/${loggedInUser.branch.id}`}
             >
               <i className="fa-solid fa-building"></i>
               <span>Branch</span>
             </Link>
           </li>
-        )}
+        ) : null}
       </ul>
       <div id="content-wrapper" className="d-flex flex-column">
         <div id="content">

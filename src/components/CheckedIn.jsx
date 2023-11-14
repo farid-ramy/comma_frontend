@@ -13,7 +13,8 @@ export default function CheckedIn(props) {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [reload, setReload] = useState(false);
-  const [payment, setpayment] = useState(0);
+  const [payment, setPayment] = useState(0);
+  const [checkedInRecord, setCheckedInRecord] = useState({});
 
   useEffect(() => {
     axios(`${URL}/users/get?role=client`)
@@ -24,18 +25,19 @@ export default function CheckedIn(props) {
   }, []);
 
   useEffect(() => {
-    axios(
-      `${URL}/history/filter?branch_id=${loggedInUser.branch_id}&check_out_time=true`
-    )
-      .then((res) => setcheckedInUsers(res.data))
-      .then(() => {
-        $(document).ready(function () {
-          $("#dataTable").DataTable();
-        });
-      })
-      .catch(() =>
-        ShowWarningAlert("Please check your connection or try again later")
-      );
+    if (loggedInUser.branch)
+      axios(
+        `${URL}/history?branch_id=${loggedInUser.branch.id}&check_out_time=null`
+      )
+        .then((res) => {
+          if ($.fn.dataTable.isDataTable("#dataTable"))
+            $("#dataTable").DataTable().destroy();
+          setcheckedInUsers(res.data);
+        })
+        .then(() => setTimeout(() => $("#dataTable").DataTable(), 10))
+        .catch(() =>
+          ShowWarningAlert("Please check your connection or try again later")
+        );
   }, [reload]);
 
   const fetchData = async (value) => {
@@ -64,13 +66,15 @@ export default function CheckedIn(props) {
 
   const handleStart = (user) => {
     axios
-      .post(`${URL}/history/check_in`, {
-        client_id: user.id,
-        employee_id: loggedInUser.id,
-        branch_id: loggedInUser.branch_id,
+      .post(`${URL}/history/create`, {
+        client: user.id,
+        employee: loggedInUser.id,
+        branch: loggedInUser.branch.id,
       })
       .then((res) => {
-        if (res.error) ShowWarningAlert(res.error);
+        if (res.data.error) {
+          return ShowWarningAlert(res.data.error);
+        }
         handleChange("");
         setReload(!reload);
       })
@@ -79,14 +83,17 @@ export default function CheckedIn(props) {
       );
   };
 
-  const handleStopBtn = (checkedInRecord) => {
+  const handleCheckOutBtn = (e) => {
+    e.preventDefault();
     axios
-      .put(`${URL}/history/${checkedInRecord.id}/check_out`, {
+      .put(`${URL}/history/${checkedInRecord.id}/update`, {
+        check_out_time: new Date().toISOString(),
         payment,
       })
       .then((res) => {
         if (res.error) ShowWarningAlert(res.error);
         setReload(!reload);
+        $("#exampleModal").modal("hide");
       })
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
@@ -96,7 +103,7 @@ export default function CheckedIn(props) {
   const handleDeleteBtn = (checkedInRecord) => {
     if (
       window.confirm(
-        `Are you should you want to delete ${checkedInRecord.client_id.first_name} ${checkedInRecord.client_id.last_name} ?`
+        `Are you should you want to delete ${checkedInRecord.client.first_name} ${checkedInRecord.client.last_name} ?`
       )
     ) {
       axios
@@ -136,7 +143,7 @@ export default function CheckedIn(props) {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form id="myForm">
+            <form id="myForm" onSubmit={(e) => handleCheckOutBtn(e)}>
               <div className="modal-body">
                 <div className="row">
                   <div className="form-group">
@@ -148,18 +155,14 @@ export default function CheckedIn(props) {
                       value={payment}
                       onChange={(e) =>
                         /^\d*$/.test(e.target.value.trim()) &&
-                        setpayment(e.target.value.trim())
+                        setPayment(e.target.value.trim())
                       }
                     />
                   </div>
                 </div>
               </div>
               <div className="modal-footer">
-                <button
-                  type="submit"
-                  className="btn btn-success"
-                  // onClick={() => handleStopBtn(checkedInRecord)}
-                >
+                <button type="submit" className="btn btn-success">
                   Check out
                 </button>
                 <button
@@ -206,10 +209,9 @@ export default function CheckedIn(props) {
               left: "50%",
               width: "100%",
               transform: "translateX(-50%)",
-              boxShadow: "0px 2px 2px rgba(0,0,0,0.45)",
             }}
           >
-            <table className="table table-hover">
+            <table className="table" style={{boxShadow: "0px 0px 10px gray"}}>
               <thead>
                 <tr>
                   <th scope="col">Id</th>
@@ -220,7 +222,7 @@ export default function CheckedIn(props) {
                 </tr>
               </thead>
               <tbody>
-                {usersData.map((user) => {
+                {results.map((user) => {
                   return (
                     <tr key={user.id}>
                       <th scope="row">{user.id}</th>
@@ -267,29 +269,29 @@ export default function CheckedIn(props) {
               </thead>
               <tbody>
                 {checkedInUsers.map((checkedInRecord) => (
-                  <tr key={checkedInRecord.client_id.id}>
-                    <td>{checkedInRecord.client_id.id}</td>
+                  <tr key={checkedInRecord.client.id}>
+                    <td>{checkedInRecord.client.id}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
                       <Link
                         className="text-dark"
-                        to={`../user_info/${checkedInRecord.client_id.id}`}
+                        to={`../user_info/${checkedInRecord.client.id}`}
                       >
-                        {checkedInRecord.client_id.first_name}{" "}
-                        {checkedInRecord.client_id.last_name}
+                        {checkedInRecord.client.first_name}{" "}
+                        {checkedInRecord.client.last_name}
                       </Link>
                     </td>
                     <td>
-                      {checkedInRecord.client_id.phone
-                        ? "*****" + checkedInRecord.client_id.phone.slice(-4)
+                      {checkedInRecord.client.phone
+                        ? "*****" + checkedInRecord.client.phone.slice(-4)
                         : "-"}
                       <span className="d-none">
-                        {checkedInRecord.client_id.phone}
+                        {checkedInRecord.client.phone}
                       </span>
                     </td>
                     <td>
-                      {checkedInRecord.client_id.email ? "***" : "-"}
+                      {checkedInRecord.client.email ? "***" : "-"}
                       <span className="d-none">
-                        {checkedInRecord.client_id.email}
+                        {checkedInRecord.client.email}
                       </span>
                     </td>
                     <td>
@@ -301,6 +303,7 @@ export default function CheckedIn(props) {
                         type="button"
                         data-toggle="modal"
                         data-target="#exampleModal"
+                        onClick={() => setCheckedInRecord(checkedInRecord)}
                       >
                         Stop
                       </button>

@@ -19,7 +19,7 @@ export default function AddBranch(props) {
       return;
     }
     try {
-      const res = await axios.post(`${URL}/branches/add`, {
+      const res = await axios.post(`${URL}/branches/create`, {
         name,
         address,
         phone,
