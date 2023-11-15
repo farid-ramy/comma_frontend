@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import Packages from "./Branch/Packages";
+import Kitchen from "./Branch/Kitchen";
+import BranchDetails from "./Branch/BranchDetails";
+import Analysis from "./Branch/Analysis";
 import axios from "axios";
-import {
-  ShowSuccessAlert,
-  ShowFailedAlert,
-  ShowWarningAlert,
-} from "../utilities/toastify";
-import $ from "jquery";
+import { ShowWarningAlert } from "../utilities/toastify";
 import "datatables.net";
 
 export default function Branch(props) {
@@ -54,21 +53,7 @@ export default function Branch(props) {
           aria-labelledby="panelsStayOpen-headingOne"
         >
           <div className="accordion-body">
-            <form>
-              <div className="form-group col-3">
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="name"
-                  value={branch.name}
-                />
-              </div>
-              <div className="form-group col-3">
-                <label htmlFor="lastName">Last Name</label>
-                <input type="text" className="form-control" id="lastName" />
-              </div>
-            </form>
+            <BranchDetails />
           </div>
         </div>
       </div>
@@ -90,7 +75,9 @@ export default function Branch(props) {
           className="accordion-collapse collapse"
           aria-labelledby="panelsStayOpen-headingTwo"
         >
-          <div className="accordion-body">x</div>
+          <div className="accordion-body">
+            <Analysis />
+          </div>
         </div>
       </div>
       <div className="accordion-item">
@@ -111,7 +98,32 @@ export default function Branch(props) {
           className="accordion-collapse collapse"
           aria-labelledby="panelsStayOpen-headingThree"
         >
-          <div className="accordion-body">x</div>
+          <div className="accordion-body">
+            <Kitchen />
+          </div>
+        </div>
+      </div>
+      <div className="accordion-item">
+        <h2 className="accordion-header" id="panelsStayOpen-headingFour">
+          <button
+            className="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#panelsStayOpen-collapseFour"
+            aria-expanded="false"
+            aria-controls="panelsStayOpen-collapseFour"
+          >
+            Packages
+          </button>
+        </h2>
+        <div
+          id="panelsStayOpen-collapseFour"
+          className="accordion-collapse collapse"
+          aria-labelledby="panelsStayOpen-headingFour"
+        >
+          <div className="accordion-body">
+            <Packages url={URL} />
+          </div>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import {
   ShowFailedAlert,
   ShowSuccessAlert,
   ShowWarningAlert,
-} from "../../utilities/toastify";
+} from "../utilities/toastify";
 
 export default function AddBranch(props) {
   const URL = props.url;

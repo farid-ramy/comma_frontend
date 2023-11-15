@@ -53,12 +53,6 @@ export default function Navbar(props) {
             <span>Users</span>
           </Link>
         </li>
-        <li className="nav-item">
-          <Link className="nav-link" to="./packages">
-            <i className="fa-solid fa-cube"></i>
-            <span>Packages</span>
-          </Link>
-        </li>
         {loggedInUser.role === "owner" ? (
           <li className="nav-item">
             <span

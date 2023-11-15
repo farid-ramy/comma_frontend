@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { ShowWarningAlert } from "../../utilities/toastify";
+import { ShowWarningAlert } from "../utilities/toastify";
 
 export default function Dashboard(props) {
   const URL = props.url;

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import $ from "jquery";
 import {
   ShowFailedAlert,
   ShowSuccessAlert,
   ShowWarningAlert,
-} from "../utilities/toastify";
+} from "../../utilities/toastify";
 
 export default function Packages(props) {
   const URL = props.url;
