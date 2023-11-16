@@ -11,6 +11,7 @@ import CheckedIn from "./components/CheckedIn";
 import Branch from "./components/Branch";
 import Navbar from "./components/Navbar";
 import Dashboard from "./components/Dashboard";
+import Rooms from "./components/rooms"
 
 import OwnerAddBranch from "./components/OwnerAddBranch";
 
@@ -45,6 +46,8 @@ export default function App() {
           <Route path="user_info/:userId" element={<UsersInfo url={URL} />} />
           <Route path="packages" element={<Packages url={URL} />} />
           <Route path="branch/:branchId" element={<Branch url={URL} />} />
+          <Route path="rooms" element={<Rooms url={URL} />} />
+
         </Route>
         <Route path="manager" element={<Navbar url={URL} />}>
           <Route path="dashboard" element={<Dashboard url={URL} />} />
@@ -53,6 +56,7 @@ export default function App() {
           <Route path="user_info/:userId" element={<UsersInfo url={URL} />} />
           <Route path="packages" element={<Packages url={URL} />} />
           <Route path="branch/:branchId" element={<Branch url={URL} />} />
+          <Route path="rooms" element={<Rooms url={URL} />} />
         </Route>
       </Route>
 

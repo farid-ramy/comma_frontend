@@ -99,7 +99,7 @@ export default function Branch(props) {
           aria-labelledby="panelsStayOpen-headingThree"
         >
           <div className="accordion-body">
-            <Kitchen />
+            <Kitchen url={URL} />
           </div>
         </div>
       </div>
