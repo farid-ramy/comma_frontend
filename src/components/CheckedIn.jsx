@@ -203,7 +203,8 @@ export default function CheckedIn(props) {
                           <input
                             type="number"
                             min={0}
-                            style={{ width: "50px" }}
+                            className="form-control"
+                            style={{ width: "70px" }}
                             onChange={(e) => {
                               const quantity =
                                 parseInt(e.target.value, 10) || 0;
