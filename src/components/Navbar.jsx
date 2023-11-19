@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { useUrl } from "../context/UrlProvider";
 import axios from "axios";
 import { ShowWarningAlert } from "../utilities/toastify";
 import pp from "../img/undraw_profile.svg";
 
 export default function Navbar(props) {
-  const URL = props.url;
   const { loggedInUser } = useAuth();
-  const [branches, setBranches] = useState([]);
+  const { url } = useUrl();
   const navigate = useNavigate();
 
+  const [branches, setBranches] = useState([]);
+
   useEffect(() => {
-    axios(`${URL}/branches`)
+    axios(`${url}/branches`)
       .then((res) => {
         setBranches(res.data);
       })
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
       );
-  }, [props.reload]);
+  }, [props.reRenderNavbar]);
 
   return (
     <div id="wrapper">

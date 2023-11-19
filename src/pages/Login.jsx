@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { useUrl } from "../context/UrlProvider";
 import axios from "axios";
 import { ShowFailedAlert, ShowWarningAlert } from "../utilities/toastify";
 
-export default function Login(props) {
-  const URL = props.url;
+export default function Login() {
   const { setLoggedInUser } = useAuth();
+  const { url } = useUrl();
+  const navigate = useNavigate();
+
   const [eye, setEye] = useState(true);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,7 +21,7 @@ export default function Login(props) {
       return ShowWarningAlert("Please fill all the fields");
 
     axios
-      .post(`${URL}/users/login`, {
+      .post(`${url}/users/login`, {
         username,
         password,
       })
@@ -30,7 +33,7 @@ export default function Login(props) {
           navigate(`/${res.data.role}`);
         }
       })
-      .catch((err) =>
+      .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
       );
   };

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { ShowSuccessAlert, ShowWarningAlert } from "../utilities/toastify";
+import { useUrl } from "../context/UrlProvider";
 
-export default function UsersInfo(props) {
-  const URL = props.url;
+export default function UsersInfo() {
+  const { url } = useUrl();
   const { userId } = useParams();
   const [user, setUser] = useState({});
   const [reset, setReset] = useState(false);
@@ -22,7 +23,7 @@ export default function UsersInfo(props) {
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    axios(`${URL}/users/get/${userId}`)
+    axios(`${url}/users/get/${userId}`)
       .then((res) => {
         setUser(res.data);
         setBranch(res.data.branch);
@@ -46,7 +47,7 @@ export default function UsersInfo(props) {
   const handleUpdate = (e) => {
     e.preventDefault();
     axios
-      .put(`${URL}/users/${user.id}/update`, {
+      .put(`${url}/users/${user.id}/update`, {
         role: user.role,
         first_name,
         last_name,
@@ -67,7 +68,6 @@ export default function UsersInfo(props) {
       );
   };
 
-  console.log(user);
   return (
     <div className="container">
       <div className="row gutters">
@@ -264,7 +264,6 @@ export default function UsersInfo(props) {
                             ? h.check_out_time
                             : h.check_in_time
                         );
-                        console.log(checkOutTime);
 
                         const timeDifference = new Date(
                           checkOutTime - checkInTime

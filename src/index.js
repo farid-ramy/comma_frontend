@@ -15,16 +15,19 @@ import "./vendor/datatables/jquery.dataTables.min.js";
 import "./vendor/datatables/dataTables.bootstrap4.min.js";
 import "./js/demo/datatables-demo.js";
 import { AuthProvider } from "./context/AuthProvider";
+import { UrlProvider } from "./context/UrlProvider.js";
 import { ToastContainer } from "react-toastify";
 import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-    <AuthProvider>
-      <App />
-      <ToastContainer />
-    </AuthProvider>
+    <UrlProvider>
+      <AuthProvider>
+        <App />
+        <ToastContainer />
+      </AuthProvider>
+    </UrlProvider>
     <ToastContainer />
   </BrowserRouter>
 );

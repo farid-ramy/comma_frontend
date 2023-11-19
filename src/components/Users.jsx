@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { useUrl } from "../context/UrlProvider";
 import axios from "axios";
 import {
   ShowSuccessAlert,
@@ -10,9 +11,9 @@ import {
 import $ from "jquery";
 import "datatables.net";
 
-export default function Users(props) {
-  const URL = props.url;
+export default function Users() {
   const { loggedInUser } = useAuth();
+  const { url } = useUrl();
 
   const [usersData, setUsersData] = useState([]);
   const [refresh, setRefresh] = useState(false);
@@ -20,17 +21,17 @@ export default function Users(props) {
   const [role, setRole] = useState("client");
   const [username, setUserName] = useState(null);
   const [password, setPassword] = useState(null);
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [job, setJob] = useState("");
-  const [national_id, setNationalId] = useState("");
-  const [address, setAddress] = useState("");
+  const [first_name, setFirstName] = useState(null);
+  const [last_name, setLastName] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [phone, setPhone] = useState(null);
+  const [job, setJob] = useState(null);
+  const [national_id, setNationalId] = useState(null);
+  const [address, setAddress] = useState(null);
 
   useEffect(() => {
     if (loggedInUser.branch || loggedInUser.role === "owner")
-      axios(`${URL}/users/get?role=client`)
+      axios(`${url}/users/get?role=client`)
         .then((res) => {
           if ($.fn.dataTable.isDataTable("#dataTable"))
             $("#dataTable").DataTable().destroy();
@@ -51,7 +52,7 @@ export default function Users(props) {
       )
     )
       axios
-        .delete(`${URL}/users/${user.id}/delete`)
+        .delete(`${url}/users/${user.id}/delete`)
         .then(() => {
           setRefresh(!refresh);
           ShowSuccessAlert(
@@ -73,7 +74,7 @@ export default function Users(props) {
       return ShowWarningAlert("Fill both username and password");
 
     axios
-      .post(`${URL}/users/create`, {
+      .post(`${url}/users/create`, {
         role,
         first_name,
         last_name,

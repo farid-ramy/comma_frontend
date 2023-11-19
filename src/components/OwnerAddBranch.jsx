@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import {
   ShowFailedAlert,
@@ -7,7 +7,6 @@ import {
 } from "../utilities/toastify";
 
 export default function AddBranch(props) {
-  const URL = props.url;
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
@@ -27,7 +26,7 @@ export default function AddBranch(props) {
       if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
       else {
         ShowSuccessAlert("Branch added successfully");
-        props.setReload(!props.reload);
+        props.setReRenderNavbar(!props.reRenderNavbar);
       }
     } catch (error) {
       ShowFailedAlert(error);
