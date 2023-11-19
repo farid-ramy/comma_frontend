@@ -279,7 +279,12 @@ export default function UsersInfo() {
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
                             <td>{checkInTime.toLocaleString()}</td>
-                            <td>{checkOutTime.toLocaleString()}</td>
+                            <td>
+                              {checkOutTime.toLocaleString() ===
+                              checkInTime.toLocaleString()
+                                ? "-"
+                                : checkOutTime.toLocaleString()}
+                            </td>
                             <td>{formattedTimeDifference}</td>
                             <td>{h.payment ?? "-"}</td>
                           </tr>
