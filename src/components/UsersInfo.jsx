@@ -7,9 +7,12 @@ import { useUrl } from "../context/UrlProvider";
 export default function UsersInfo() {
   const { url } = useUrl();
   const { userId } = useParams();
-  const [user, setUser] = useState({});
   const [reset, setReset] = useState(false);
   const [reload, setReload] = useState(false);
+
+  const [user, setUser] = useState({});
+  const [branch, setBranch] = useState({});
+  const [history, setHistory] = useState([]);
 
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
@@ -18,9 +21,6 @@ export default function UsersInfo() {
   const [job, setJob] = useState("");
   const [national_id, setNationalId] = useState("");
   const [address, setAddress] = useState("");
-
-  const [branch, setBranch] = useState({});
-  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     axios(`${url}/users/get/${userId}`)
@@ -107,7 +107,7 @@ export default function UsersInfo() {
                         type="text"
                         className="form-control"
                         id="createAt"
-                        value={new Date(user.created_at).toLocaleString()}
+                        value={new Date(user.created_at).toLocaleString() || ""}
                         disabled
                       />
                     </div>
@@ -119,7 +119,7 @@ export default function UsersInfo() {
                         type="text"
                         className="form-control"
                         id="createInBranch"
-                        value={branch.name}
+                        value={branch.name || ""}
                         disabled
                       />
                     </div>
@@ -212,19 +212,13 @@ export default function UsersInfo() {
                 <div className="row">
                   <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div className="text-right">
-                      <button
-                        type="submit"
-                        id="submit"
-                        className="btn btn-success mx-2"
-                      >
+                      <button type="submit" className="btn btn-success mx-2">
                         Update
                       </button>
                       <button
+                        type="reset"
                         className="btn btn-secondary"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setReset(!reset);
-                        }}
+                        onClick={() => setReset(!reset)}
                       >
                         Cancel
                       </button>

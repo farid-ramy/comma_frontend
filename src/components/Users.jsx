@@ -3,11 +3,7 @@ import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useUrl } from "../context/UrlProvider";
 import axios from "axios";
-import {
-  ShowSuccessAlert,
-  ShowFailedAlert,
-  ShowWarningAlert,
-} from "../utilities/toastify";
+import { ShowSuccessAlert, ShowWarningAlert } from "../utilities/toastify";
 import $ from "jquery";
 import "datatables.net";
 
@@ -15,8 +11,9 @@ export default function Users() {
   const { loggedInUser } = useAuth();
   const { url } = useUrl();
 
+  const [refreshTable, setRefreshTable] = useState(false);
+
   const [usersData, setUsersData] = useState([]);
-  const [refresh, setRefresh] = useState(false);
 
   const [role, setRole] = useState("client");
   const [username, setUserName] = useState(null);
@@ -30,20 +27,19 @@ export default function Users() {
   const [address, setAddress] = useState(null);
 
   useEffect(() => {
-    if (loggedInUser.branch || loggedInUser.role === "owner")
-      axios(`${url}/users/get?role=client`)
-        .then((res) => {
-          if ($.fn.dataTable.isDataTable("#dataTable"))
-            $("#dataTable").DataTable().destroy();
-          setUsersData(res.data);
-        })
-        .then(() => {
-          setTimeout(() => $("#dataTable").DataTable(), 10);
-        })
-        .catch(() =>
-          ShowWarningAlert("Please check your connection or try again later")
-        );
-  }, [refresh]);
+    axios(`${url}/users/get?role=client`)
+      .then((res) => {
+        if ($.fn.dataTable.isDataTable("#dataTable"))
+          $("#dataTable").DataTable().destroy();
+        setUsersData(res.data);
+      })
+      .then(() => {
+        setTimeout(() => $("#dataTable").DataTable(), 10);
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  }, [refreshTable]);
 
   const handleDeleteBtn = (user) => {
     if (
@@ -54,23 +50,24 @@ export default function Users() {
       axios
         .delete(`${url}/users/${user.id}/delete`)
         .then(() => {
-          setRefresh(!refresh);
+          setRefreshTable(!refreshTable);
           ShowSuccessAlert(
             `${user.first_name + " " + user.last_name} was deleted successfully`
           );
         })
-        .catch((error) => ShowFailedAlert(error));
+        .catch(() =>
+          ShowWarningAlert("Please check your connection or try again later")
+        );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!first_name || !last_name)
       return ShowWarningAlert("Fill all the important fields");
-    if (role === "client") {
-      setUserName("");
-      setPassword("");
-    }
-    if ((username && !password) || (!username && password))
+    else if (role === "client") {
+      setUserName(null);
+      setPassword(null);
+    } else if ((username && !password) || (!username && password))
       return ShowWarningAlert("Fill both username and password");
 
     axios
@@ -92,7 +89,7 @@ export default function Users() {
         if (!res.data.id)
           return ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
         ShowSuccessAlert("User added successfully");
-        setRefresh(!refresh);
+        setRefreshTable(!refreshTable);
         $("#exampleModal").modal("hide");
         $("#myForm")[0].reset();
       })
@@ -103,18 +100,16 @@ export default function Users() {
 
   return (
     <div>
-      {loggedInUser.branch || loggedInUser.role === "owner" ? (
-        <div className="d-flex flex-row-reverse">
-          <button
-            type="button"
-            className="btn btn-secondary mb-3"
-            data-toggle="modal"
-            data-target="#exampleModal"
-          >
-            + Add User
-          </button>
-        </div>
-      ) : null}
+      <div className="d-flex flex-row-reverse">
+        <button
+          type="button"
+          className="btn btn-secondary mb-3"
+          data-toggle="modal"
+          data-target="#exampleModal"
+        >
+          + Add User
+        </button>
+      </div>
       <div className="card shadow mb-4">
         <div className="card-body">
           <div className="table-responsive">
@@ -138,57 +133,48 @@ export default function Users() {
                 </tr>
               </thead>
               <tbody>
-                {usersData
-                  .filter((user) => {
-                    if (
-                      user.role !== "owner" &&
-                      loggedInUser.role !== user.role &&
-                      (loggedInUser.role !== "admin" || user.role === "client")
-                    )
-                      return user;
-                  })
-                  .map((user) => (
-                    <tr key={user.id}>
-                      <td>{user.id}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Link
-                          className="text-dark"
-                          to={`../user_info/${user.id}`}
-                        >
-                          {user.first_name} {user.last_name}
-                        </Link>
-                      </td>
-                      <td>
-                        {user.phone ? "*****" + user.phone.slice(-4) : "-"}
-                        <span className="d-none">{user.phone}</span>
-                      </td>
-                      <td>
-                        {user.email ? "***" : "-"}
-                        <span className="d-none">{user.email}</span>
-                      </td>
-                      <td>{user.role}</td>
-                      <td>
-                        {user.job ? user.job.slice(0, 5) + "..." : "-"}
-                        <span className="d-none">{user.job}</span>
-                      </td>
-                      <td>
-                        {user.address ? user.address.slice(0) + ".." : "-"}
-                        <span className="d-none">{user.address}</span>
-                      </td>
-                      <td>
-                        {user.national_id ? "***" : "-"}
-                        <span className="d-none">{user.national_id}</span>
-                      </td>
-                      <td>
-                        <button
-                          className="text-danger border-0 bg-color bg-transparent"
-                          onClick={() => handleDeleteBtn(user)}
-                        >
-                          <i className="fa-solid fa-trash-can"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                {usersData.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Link
+                        className="text-dark"
+                        to={`../user_info/${user.id}`}
+                      >
+                        {user.first_name} {user.last_name}
+                      </Link>
+                    </td>
+                    <td>
+                      {user.phone ? "*****" + user.phone.slice(-4) : "-"}
+                      <span className="d-none">{user.phone}</span>
+                    </td>
+                    <td>
+                      {user.email ? "***" : "-"}
+                      <span className="d-none">{user.email}</span>
+                    </td>
+                    <td>{user.role}</td>
+                    <td>
+                      {user.job ? user.job.slice(0, 5) + "..." : "-"}
+                      <span className="d-none">{user.job}</span>
+                    </td>
+                    <td>
+                      {user.address ? user.address.slice(0) + ".." : "-"}
+                      <span className="d-none">{user.address}</span>
+                    </td>
+                    <td>
+                      {user.national_id ? "***" : "-"}
+                      <span className="d-none">{user.national_id}</span>
+                    </td>
+                    <td>
+                      <button
+                        className="text-danger border-0 bg-color bg-transparent"
+                        onClick={() => handleDeleteBtn(user)}
+                      >
+                        <i className="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -230,12 +216,11 @@ export default function Users() {
                     >
                       {["client", "admin", "manager"]
                         .filter((role) => {
-                          if (
+                          return (
                             role !== "owner" &&
                             loggedInUser.role !== role &&
                             (loggedInUser.role !== "admin" || role === "client")
-                          )
-                            return role;
+                          );
                         })
                         .map((role) => (
                           <option value={role} key={role}>
@@ -309,7 +294,7 @@ export default function Users() {
                       type="text"
                       className="form-control"
                       id="phone"
-                      value={phone}
+                      value={phone || ""}
                       onChange={(e) =>
                         /^\d*$/.test(e.target.value.trim()) &&
                         setPhone(e.target.value.trim())
@@ -333,7 +318,7 @@ export default function Users() {
                       type="text"
                       className="form-control"
                       id="nationalId"
-                      value={national_id}
+                      value={national_id || ""}
                       onChange={(e) =>
                         /^\d*$/.test(e.target.value.trim()) &&
                         setNationalId(e.target.value.trim())

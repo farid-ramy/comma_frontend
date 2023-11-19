@@ -37,7 +37,7 @@ export default function App() {
             element={
               <OwnerAddBranch
                 reRenderNavbar={reRenderNavbar}
-                setReRenderNavbar={`setReRenderNavbar`}
+                setReRenderNavbar={setReRenderNavbar}
               />
             }
           />

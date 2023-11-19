@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import useAuth from "../hooks/useAuth";
+import { useUrl } from "../context/UrlProvider";
 import { ShowWarningAlert } from "../utilities/toastify";
 
-export default function Dashboard(props) {
-  const URL = props.url;
+export default function Dashboard() {
+  const { setLoggedInUser } = useAuth();
+  const { url } = useUrl();
+
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios(`${URL}/users/get`)
+    axios(`${url}/users/get`)
       .then((res) => setUsers(res.data))
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
