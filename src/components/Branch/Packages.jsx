@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
+import { useUrl } from "../../context/UrlProvider";
 import $ from "jquery";
 import {
   ShowFailedAlert,
@@ -8,10 +10,11 @@ import {
   ShowWarningAlert,
 } from "../../utilities/toastify";
 
-export default function Packages(props) {
-  const URL = props.url;
+export default function Packages() {
+  const { url } = useUrl();
   const { loggedInUser } = useAuth();
   const [reload, setReload] = useState(false);
+  const { branchId } = useParams();
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -19,36 +22,39 @@ export default function Packages(props) {
   const [packages, setPackages] = useState([]);
   const [viewingPackage, setViewingPackage] = useState(null);
 
-  async function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !price) {
-      ShowWarningAlert("Fill all the important fields");
-      return;
-    }
-    try {
-      const res = await axios.post(`${URL}/packages/create`, {
+    if (!name || !price)
+      return ShowWarningAlert("Fill all the important fields");
+
+    axios
+      .post(`${url}/packages/create`, {
         name,
         price,
         description,
-      });
-      if (!res.data.id) ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
-      else {
-        setReload(!reload);
-        $("#exampleModal").modal("hide");
-        $("#myForm")[0].reset();
-      }
-    } catch (error) {
-      ShowFailedAlert(error);
-    }
-  }
+        branch: branchId,
+      })
+      .then((res) => {
+        if (!res.data.id)
+          return ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+        else {
+          setReload(!reload);
+          $("#exampleModal").modal("hide");
+          $("#myForm")[0].reset();
+        }
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  };
 
   useEffect(() => {
-    axios(`${URL}/packages`)
+    axios(`${url}/packages?branch=${branchId}`)
       .then((res) => setPackages(res.data))
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
       );
-  }, [reload]);
+  }, [reload, branchId]);
 
   async function viewPackage(pkg) {
     setViewingPackage(pkg);
@@ -61,7 +67,7 @@ export default function Packages(props) {
   const handleDelete = (pkg) => {
     if (window.confirm(`Are you should you want to delete ${pkg.name} ?`))
       axios
-        .delete(`${URL}/packages/${pkg.id}/delete`)
+        .delete(`${url}/packages/${pkg.id}/delete`)
         .then(() => {
           setReload(!reload);
           ShowSuccessAlert(`${pkg.name}  was deleted successfully`);
@@ -69,8 +75,6 @@ export default function Packages(props) {
         })
         .catch((error) => ShowFailedAlert(error));
   };
-
-  const handleUpdate = (pkg) => {};
 
   return (
     <div className="container-fluid">
@@ -106,38 +110,38 @@ export default function Packages(props) {
               <strong>Description: </strong>
               {viewingPackage.description ? viewingPackage.description : " - "}
             </p>
-            <button
-              className="btn btn-success mr-2"
-              onClick={() => handleUpdate(viewingPackage)}
-            >
-              Update
-            </button>
-            <button
-              className="btn btn-danger ml-2"
-              onClick={() => handleDelete(viewingPackage)}
-            >
-              delete
-            </button>
+            {loggedInUser.role === "owner" && (
+              <button
+                className="btn btn-danger ml-2 float-end"
+                onClick={() => handleDelete(viewingPackage)}
+              >
+                delete
+              </button>
+            )}
           </div>
         </div>
       )}
       <div className="card shadow mb-4">
         <div className="card-body">
           <div className="row">
-            {packages.map((pkg) => (
-              <div className="card m-3 col-3" key={pkg.id}>
-                <div className="card-body">
-                  <h5 className="card-title">{pkg.name}</h5>
-                  <p className="card-text">Price: ${pkg.price}</p>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => viewPackage(pkg)}
-                  >
-                    View Package
-                  </button>
+            {packages.length > 0 ? (
+              packages.map((pkg) => (
+                <div className="card m-3 col-3" key={pkg.id}>
+                  <div className="card-body">
+                    <h5 className="card-title">{pkg.name}</h5>
+                    <p className="card-text">Price: ${pkg.price}</p>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => viewPackage(pkg)}
+                    >
+                      View Package
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-center mt-3">No packages found</p>
+            )}
           </div>
         </div>
       </div>

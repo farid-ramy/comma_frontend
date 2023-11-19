@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useUrl } from "../context/UrlProvider";
 import useAuth from "../hooks/useAuth";
 import Packages from "./Branch/Packages";
 import Kitchen from "./Branch/Kitchen";
@@ -9,28 +10,21 @@ import axios from "axios";
 import { ShowWarningAlert } from "../utilities/toastify";
 import "datatables.net";
 
-export default function Branch(props) {
-  const URL = props.url;
-  const { loggedInUser } = useAuth();
+export default function Branch() {
+  const { setLoggedInUser } = useAuth();
+  const { url } = useUrl();
   const { branchId } = useParams();
 
   const [branch, setbranch] = useState({});
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    axios(`${URL}/branches/${branchId}`)
-      .then((res) => {
-        // if ($.fn.dataTable.isDataTable("#dataTable"))
-        //   $("#dataTable").DataTable().destroy();
-        setbranch(res.data);
-      })
-      .then(() => {
-        // setTimeout(() => $("#dataTable").DataTable(), 10);
-      })
+    axios(`${url}/branches/${branchId}`)
+      .then((res) => setbranch(res.data))
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
       );
-  }, [refresh]);
+  }, [refresh, branchId]);
 
   return (
     <div className="accordion" id="accordionPanelsStayOpenExample">
@@ -53,7 +47,7 @@ export default function Branch(props) {
           aria-labelledby="panelsStayOpen-headingOne"
         >
           <div className="accordion-body">
-            <BranchDetails />
+            <BranchDetails branch={branch} />
           </div>
         </div>
       </div>
@@ -122,7 +116,7 @@ export default function Branch(props) {
           aria-labelledby="panelsStayOpen-headingFour"
         >
           <div className="accordion-body">
-            <Packages url={URL} />
+            <Packages />
           </div>
         </div>
       </div>
