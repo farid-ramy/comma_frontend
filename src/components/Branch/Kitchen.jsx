@@ -153,7 +153,6 @@ export default function Kitchen() {
                       type="text"
                       className="form-control"
                       id="name"
-                      value={name}
                       onChange={(e) => setName(e.target.value.trim())}
                     />
                   </div>

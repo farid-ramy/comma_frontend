@@ -171,7 +171,6 @@ export default function Packages() {
                       className="form-control"
                       id="name"
                       placeholder="Name"
-                      value={name}
                       onChange={(e) => setName(e.target.value.trim())}
                     />
                   </div>
@@ -201,7 +200,6 @@ export default function Packages() {
                       className="form-control"
                       placeholder="Description.."
                       id="floatingTextarea2"
-                      value={description}
                       onChange={(e) => setDescription(e.target.value.trim())}
                     ></textarea>
                   </div>
