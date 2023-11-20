@@ -45,6 +45,17 @@ const DataTable = () => {
         console.error('Error adding product:', error);
       });
   };
+  const handleDelete = (productId) => {
+    axios.delete(`http://127.0.0.1:8000/api/products/delete${productId}`)
+      .then(response => {
+        console.log('Product deleted successfully:', response.data);
+        fetchProducts();
+      })
+      .catch(error => {
+        console.error('Error deleting product:', error);
+      });
+  };
+
 
   return (
     <div>
@@ -95,25 +106,49 @@ const DataTable = () => {
         </div>
       </div>
 
-      {/* Table to display product data */}
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Product Name</th>
-            <th>Quantity</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(product => (
-            <tr key={product.id}>
-              <td>{product.name}</td>
-              <td>{product.quantity}</td>
-              <td>{product.price}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="card shadow mb-4">
+        <div className="card-body">
+          <div className="table-responsive">
+            <table
+              className="table table-bordered"
+              id="dataTable"
+              width="100%"
+              cellSpacing="0"
+            >
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((product) => (
+                  <tr key={product.id}>
+                    <td>{product.id}</td>
+                    <td>{product.name}</td>
+                    <td>{product.quantity}</td>
+                    <td>{product.price}</td>
+                    <td>
+                      <button
+                        className="text-danger border-0 bg-color bg-transparent"
+                        onClick={() => handleDelete(product.id)}
+                      >
+                        <i className="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+
     </div>
   );
 
