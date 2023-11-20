@@ -1,23 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useUrl } from "../context/UrlProvider";
-import useAuth from "../hooks/useAuth";
-import Packages from "./Branch/Packages";
-import Kitchen from "./Branch/Kitchen";
-import BranchDetails from "./Branch/BranchDetails";
-import Analysis from "./Branch/Analysis";
-import Rooms from "./Branch/Rooms";
-import axios from "axios";
 import { ShowWarningAlert } from "../utilities/toastify";
-import "datatables.net";
 
-export default function Branch() {
-  const { setLoggedInUser } = useAuth();
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import BranchDetails from "./Branch/BranchDetails";
+import Kitchen from "./Branch/Kitchen";
+import Packages from "./Branch/Packages";
+import Rooms from "./Branch/Rooms";
+
+function CustomTabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 4 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
+
+export default function BasicTabs() {
   const { url } = useUrl();
   const { branchId } = useParams();
 
   const [branch, setbranch] = useState({});
-  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     axios(`${url}/branches/${branchId}`)
@@ -25,126 +52,40 @@ export default function Branch() {
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
       );
-  }, [refresh, branchId]);
+  }, [branchId]);
+
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   return (
-    <div className="accordion" id="accordionPanelsStayOpenExample">
-      <div className="accordion-item">
-        <h2 className="accordion-header" id="panelsStayOpen-headingOne">
-          <button
-            className="accordion-button collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#panelsStayOpen-collapseOne"
-            aria-expanded="false"
-            aria-controls="panelsStayOpen-collapseOne"
-          >
-            Branch Details
-          </button>
-        </h2>
-        <div
-          id="panelsStayOpen-collapseOne"
-          className="accordion-collapse collapse"
-          aria-labelledby="panelsStayOpen-headingOne"
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="basic tabs example"
         >
-          <div className="accordion-body">
-            <BranchDetails branch={branch} />
-          </div>
-        </div>
-      </div>
-      <div className="accordion-item">
-        <h2 className="accordion-header" id="panelsStayOpen-headingTwo">
-          <button
-            className="accordion-button collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#panelsStayOpen-collapseTwo"
-            aria-expanded="false"
-            aria-controls="panelsStayOpen-collapseTwo"
-          >
-            Analysis
-          </button>
-        </h2>
-        <div
-          id="panelsStayOpen-collapseTwo"
-          className="accordion-collapse collapse"
-          aria-labelledby="panelsStayOpen-headingTwo"
-        >
-          <div className="accordion-body">
-            <Analysis />
-          </div>
-        </div>
-      </div>
-      <div className="accordion-item">
-        <h2 className="accordion-header" id="panelsStayOpen-headingThree">
-          <button
-            className="accordion-button collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#panelsStayOpen-collapseThree"
-            aria-expanded="false"
-            aria-controls="panelsStayOpen-collapseThree"
-          >
-            Kitchen
-          </button>
-        </h2>
-        <div
-          id="panelsStayOpen-collapseThree"
-          className="accordion-collapse collapse"
-          aria-labelledby="panelsStayOpen-headingThree"
-        >
-          <div className="accordion-body">
-            <Kitchen />
-          </div>
-        </div>
-      </div>
-      <div className="accordion-item">
-        <h2 className="accordion-header" id="panelsStayOpen-headingFour">
-          <button
-            className="accordion-button collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#panelsStayOpen-collapseFour"
-            aria-expanded="false"
-            aria-controls="panelsStayOpen-collapseFour"
-          >
-            Packages
-          </button>
-        </h2>
-        <div
-          id="panelsStayOpen-collapseFour"
-          className="accordion-collapse collapse"
-          aria-labelledby="panelsStayOpen-headingFour"
-        >
-          <div className="accordion-body">
-            <Packages />
-          </div>
-        </div>
-      </div>
-
-      <div className="accordion-item">
-        <h2 className="accordion-header" id="panelsStayOpen-headingFive">
-          <button
-            className="accordion-button collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#panelsStayOpen-collapseFive"
-            aria-expanded="false"
-            aria-controls="panelsStayOpen-collapseFive"
-          >
-            rooms
-          </button>
-        </h2>
-        <div
-          id="panelsStayOpen-collapseFive"
-          className="accordion-collapse collapse"
-          aria-labelledby="panelsStayOpen-headingFive"
-        >
-          <div className="accordion-body">
-            <Rooms />
-          </div>
-        </div>
-      </div>
-    </div>
+          <Tab label="Branch Details" {...a11yProps(0)} />
+          <Tab label="Kitchen" {...a11yProps(1)} />
+          <Tab label="Packages" {...a11yProps(2)} />
+          <Tab label="Rooms" {...a11yProps(3)} />
+        </Tabs>
+      </Box>
+      <CustomTabPanel value={value} index={0}>
+        <BranchDetails branch={branch} />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={1}>
+        <Kitchen branch={branch} />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+        <Packages branch={branch} />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
+        <Rooms branch={branch} />
+      </CustomTabPanel>
+    </Box>
   );
 }
