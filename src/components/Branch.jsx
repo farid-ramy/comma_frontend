@@ -6,6 +6,7 @@ import Packages from "./Branch/Packages";
 import Kitchen from "./Branch/Kitchen";
 import BranchDetails from "./Branch/BranchDetails";
 import Analysis from "./Branch/Analysis";
+import Rooms from "./Branch/Rooms";
 import axios from "axios";
 import { ShowWarningAlert } from "../utilities/toastify";
 import "datatables.net";
@@ -120,7 +121,30 @@ export default function Branch() {
           </div>
         </div>
       </div>
-      {/*rooms*/}
+
+      <div className="accordion-item">
+        <h2 className="accordion-header" id="panelsStayOpen-headingFive">
+          <button
+            className="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#panelsStayOpen-collapseFive"
+            aria-expanded="false"
+            aria-controls="panelsStayOpen-collapseFive"
+          >
+            rooms
+          </button>
+        </h2>
+        <div
+          id="panelsStayOpen-collapseFive"
+          className="accordion-collapse collapse"
+          aria-labelledby="panelsStayOpen-headingFive"
+        >
+          <div className="accordion-body">
+            <Rooms />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
