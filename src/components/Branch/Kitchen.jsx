@@ -46,7 +46,7 @@ const DataTable = () => {
       });
   };
   const handleDelete = (productId) => {
-    axios.delete(`http://127.0.0.1:8000/api/products/delete${productId}`)
+    axios.delete(`http://127.0.0.1:8000/api/products/${productId}/delete`)
       .then(response => {
         console.log('Product deleted successfully:', response.data);
         fetchProducts();
