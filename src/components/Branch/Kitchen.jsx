@@ -1,7 +1,7 @@
 // DataTable.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { useUrl } from "../../context/UrlProvider";
-
+import $ from "jquery";
 import axios from 'axios';
 import {
   ShowFailedAlert,
@@ -20,48 +20,47 @@ const Products = () => {
     quantity: 0,
     price: 0,
   });
+  const [reload, setReload] = useState(false);
+
 
   const fetchProducts = () => {
-    axios.get(`${url}/packages/`)
+    axios.get(`${url}/products/`)
       .then(response => {
         setData(response.data);
       })
       .catch(error => {
         console.error('Error fetching data:', error);
+        ShowWarningAlert("Please check your connection or try again later")
+
       });
   };
 
   useEffect(() => {
     fetchProducts();
   }, []);
-
-  const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setNewProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value.trim(),
-    }));
-  }, []);
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!newProduct.name || !newProduct.price) {
+    if (!name || !price)
       return ShowWarningAlert("Fill all the important fields");
-    }
-    axios.post(`${url}/products/create`, newProduct)
-      .then(response => {
-        console.log('Product added successfully:', response.data);
-        fetchProducts();
 
-        setNewProduct({
-          name: '',
-          quantity: 0,
-          price: 0,
-        });
+    axios
+      .post(`${url}/products/create`, {
+        name,
+        price,
+        quantity,
       })
-      .catch(error => {
-        console.error('Error adding product:', error);
-      });
+      .then((res) => {
+        if (!res.data.id)
+          return ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+        else {
+          setReload(!reload);
+          $("#exampleModal").modal("hide");
+          $("#myForm")[0].reset();
+        }
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
   };
 
   const handleDelete = (productId) => {
@@ -72,6 +71,8 @@ const Products = () => {
       })
       .catch(error => {
         console.error('Error deleting product:', error);
+        ShowWarningAlert("Please check your connection or try again later")
+
       });
   };
 
