@@ -1,5 +1,7 @@
 // DataTable.js
 import React, { useState, useEffect, useCallback } from 'react';
+import { useUrl } from "../../context/UrlProvider";
+
 import axios from 'axios';
 import {
   ShowFailedAlert,
@@ -7,11 +9,12 @@ import {
   ShowWarningAlert,
 } from "../../utilities/toastify";
 
-const DataTable = () => {
+const Products = () => {
   const [data, setData] = useState([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
+  const { url } = useUrl();
   const [newProduct, setNewProduct] = useState({
     name: '',
     quantity: 0,
@@ -19,7 +22,7 @@ const DataTable = () => {
   });
 
   const fetchProducts = () => {
-    axios.get('http://127.0.0.1:8000/api/products/')
+    axios.get(`${url}/packages/`)
       .then(response => {
         setData(response.data);
       })
@@ -45,7 +48,7 @@ const DataTable = () => {
     if (!newProduct.name || !newProduct.price) {
       return ShowWarningAlert("Fill all the important fields");
     }
-    axios.post('http://127.0.0.1:8000/api/products/create', newProduct)
+    axios.post(`${url}/products/create`, newProduct)
       .then(response => {
         console.log('Product added successfully:', response.data);
         fetchProducts();
@@ -62,7 +65,7 @@ const DataTable = () => {
   };
 
   const handleDelete = (productId) => {
-    axios.delete(`http://127.0.0.1:8000/api/products/${productId}/delete`)
+    axios.delete(`${url}/products/${productId}/delete`)
       .then(response => {
         console.log('Product deleted successfully:', response.data);
         fetchProducts();
@@ -75,7 +78,6 @@ const DataTable = () => {
 
   return (
     <div>
-
       <button
         type="button"
         className="btn btn-primary"
@@ -162,11 +164,8 @@ const DataTable = () => {
           </div>
         </div>
       </div>
-
-
-
     </div>
   );
 
 }
-export default DataTable;
+export default Products;
