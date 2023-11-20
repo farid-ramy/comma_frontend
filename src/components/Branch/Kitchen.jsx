@@ -1,6 +1,11 @@
 // DataTable.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import {
+  ShowFailedAlert,
+  ShowSuccessAlert,
+  ShowWarningAlert,
+} from "../../utilities/toastify";
 
 const DataTable = () => {
   const [data, setData] = useState([]);
@@ -27,26 +32,37 @@ const DataTable = () => {
     fetchProducts();
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    setNewProduct({ ...newProduct, [name]: value });
-  };
+    setNewProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value.trim(),
+    }));
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Post new product data to Django backend
+    if (!newProduct.name || !newProduct.price) {
+      return ShowWarningAlert("Fill all the important fields");
+    }
     axios.post('http://127.0.0.1:8000/api/products/create', newProduct)
       .then(response => {
         console.log('Product added successfully:', response.data);
         fetchProducts();
+
+        setNewProduct({
+          name: '',
+          quantity: 0,
+          price: 0,
+        });
       })
       .catch(error => {
         console.error('Error adding product:', error);
       });
   };
+
   const handleDelete = (productId) => {
-    axios.delete(`http://127.0.0.1:8000/api/products/delete${productId}`)
+    axios.delete(`http://127.0.0.1:8000/api/products/${productId}/delete`)
       .then(response => {
         console.log('Product deleted successfully:', response.data);
         fetchProducts();
