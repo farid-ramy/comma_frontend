@@ -75,8 +75,6 @@ const Products = () => {
 
       });
   };
-
-
   return (
     <div>
       <button
