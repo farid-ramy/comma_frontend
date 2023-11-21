@@ -122,7 +122,6 @@ const Products = () => {
           </div>
         </div>
       </div>
-
       <div className="card shadow mb-4">
         <div className="card-body">
           <div className="table-responsive">
@@ -134,24 +133,22 @@ const Products = () => {
             >
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Name</th>
                   <th>Quantity</th>
                   <th>Price</th>
-                  <th>Action</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
-                {data.map((product) => (
+                {productsData.map((product) => (
                   <tr key={product.id}>
-                    <td>{product.id}</td>
                     <td>{product.name}</td>
                     <td>{product.quantity}</td>
                     <td>{product.price}</td>
                     <td>
                       <button
                         className="text-danger border-0 bg-color bg-transparent"
-                        onClick={() => handleDelete(product.id)}
+                        onClick={() => handleDelete(product)}
                       >
                         <i className="fa-solid fa-trash-can"></i>
                       </button>
@@ -165,6 +162,5 @@ const Products = () => {
       </div>
     </div>
   );
-
 }
 export default Products;
