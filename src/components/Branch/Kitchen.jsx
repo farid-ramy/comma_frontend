@@ -140,7 +140,7 @@ const Products = () => {
                 </tr>
               </thead>
               <tbody>
-                {productsData.map((product) => (
+                {data.map((product) => (
                   <tr key={product.id}>
                     <td>{product.name}</td>
                     <td>{product.quantity}</td>
