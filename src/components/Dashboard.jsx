@@ -3,6 +3,13 @@ import axios from "axios";
 import useAuth from "../hooks/useAuth";
 import { useUrl } from "../context/UrlProvider";
 import { ShowWarningAlert } from "../utilities/toastify";
+import {
+  ScatterChartExample,
+  LineChartExample,
+  BarChartExample,
+  PieChartExample,
+  AreaChartExample,
+} from "./charts";
 
 export default function Dashboard() {
   const { setLoggedInUser } = useAuth();
@@ -66,6 +73,11 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      <ScatterChartExample />
+      <LineChartExample />
+      <BarChartExample />
+      <PieChartExample />
+      <AreaChartExample />
     </div>
   );
 }
