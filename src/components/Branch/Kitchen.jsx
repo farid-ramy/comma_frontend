@@ -74,7 +74,9 @@ export default function Kitchen() {
 
   const handleEdite = (product) => {
     const updatedProducts = productsData.map((p) =>
-      p.id === product.id ? { ...p, isEditing: true } : p
+      p.id === product.id
+        ? { ...p, isEditing: true }
+        : { ...p, isEditing: false }
     );
     setNewPrice(product.price);
     setNewQuantity(product.quantity);
