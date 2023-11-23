@@ -4,11 +4,12 @@ import useAuth from "../../hooks/useAuth";
 import { useUrl } from "../../context/UrlProvider";
 import $ from "jquery";
 import axios from "axios";
+import ReactTable from 'react-table';
+
 export default function BranchDetails(props) {
   const { url } = useUrl();
   const [branch, setBranch] = useState(null);
   const { branchId } = useParams();
-
   useEffect(() => {
     axios(`${url}/branches/${branchId}`)
       .then((response) => {
@@ -17,8 +18,7 @@ export default function BranchDetails(props) {
       .catch((error) => {
         console.error(error);
       });
-  }, [branchId]);
-
+  }, [branchId]);  
   return (
     <div className="card shadow mb-4">
     <div className="card-body">
@@ -35,7 +35,10 @@ export default function BranchDetails(props) {
       ) : (
         <p className="card-text">No branch information available</p>
       )}
+      
     </div>
   </div>
+  
+
   );
 }

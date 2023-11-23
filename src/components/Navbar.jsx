@@ -109,7 +109,7 @@ export default function Navbar(props) {
       </ul>
       <div id="content-wrapper" className="d-flex flex-column">
         <div id="content">
-          <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <nav className="navbar navbar-expand navbar-light bg-black topbar mb-4 static-top shadow">
             <ul className="navbar-nav ml-auto">
               <li className="nav-item dropdown no-arrow">
                 <span
@@ -120,7 +120,7 @@ export default function Navbar(props) {
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  <span className="mr-2 d-none d-lg-inline text-gray-600 small">
+                  <span className="mr-2 d-none d-lg-inline text-white-600 small">
                     {loggedInUser.first_name} {loggedInUser.last_name}
                   </span>
                   <img
