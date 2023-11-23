@@ -10,11 +10,6 @@ export default function BranchDetails(props) {
   const { url } = useUrl();
   const [branch, setBranch] = useState(null);
   const { branchId } = useParams();
-  const [users, setUsers] = useState([]);
-const [packages, setPackages] = useState([]);
-const [rooms, setRooms] = useState([]);
-const [reservations, setReservations] = useState([]);
-
   useEffect(() => {
     axios(`${url}/branches/${branchId}`)
       .then((response) => {
@@ -24,43 +19,6 @@ const [reservations, setReservations] = useState([]);
         console.error(error);
       });
   }, [branchId]);  
-  useEffect(() => {
-    // Fetch users
-    axios(`${url}/branches/${branchId}/users`)
-      .then((response) => {
-        setUsers(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  
-    // Fetch packages
-    axios(`${url}/branches/${branchId}/packages`)
-      .then((response) => {
-        setPackages(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  
-    // Fetch rooms
-    axios(`${url}/branches/${branchId}/rooms`)
-      .then((response) => {
-        setRooms(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  
-    // Fetch reservations
-    axios(`${url}/branches/${branchId}/reservations`)
-      .then((response) => {
-        setReservations(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [branchId]);
   return (
     <div className="card shadow mb-4">
     <div className="card-body">
