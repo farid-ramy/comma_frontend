@@ -117,16 +117,16 @@ export default function Kitchen() {
 
   return (
     <div>
-      <div className="d-flex flex-row-reverse mb-3">
-        <button
-          type="button"
-          className="btn btn-secondary"
-          data-toggle="modal"
-          data-target="#exampleModal"
-        >
-          + Add product
-        </button>
-      </div>
+      <div className="d-flex flex-row-reverse">
+          <button
+            type="button"
+            className="btn btn-secondary mb-3"
+            data-toggle="modal"
+            data-target="#exampleModal"
+          >
+            + Add Product
+          </button>
+        </div>
       <div className="card shadow mb-4">
         <div className="card-body">
           <div className="table-responsive">
