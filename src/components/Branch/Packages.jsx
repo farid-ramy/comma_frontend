@@ -4,11 +4,7 @@ import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import { useUrl } from "../../context/UrlProvider";
 import $ from "jquery";
-import {
-  ShowFailedAlert,
-  ShowSuccessAlert,
-  ShowWarningAlert,
-} from "../../utilities/toastify";
+import { ShowSuccessAlert, ShowWarningAlert } from "../../utilities/toastify";
 
 export default function Packages() {
   const { url } = useUrl();
@@ -56,14 +52,6 @@ export default function Packages() {
       );
   }, [reload, branchId]);
 
-  async function viewPackage(pkg) {
-    setViewingPackage(pkg);
-  }
-
-  async function closeView() {
-    setViewingPackage(null);
-  }
-
   const handleDelete = (pkg) => {
     if (window.confirm(`Are you should you want to delete ${pkg.name} ?`))
       axios
@@ -71,13 +59,15 @@ export default function Packages() {
         .then(() => {
           setReload(!reload);
           ShowSuccessAlert(`${pkg.name}  was deleted successfully`);
-          closeView();
+          setViewingPackage(null);
         })
-        .catch((error) => ShowFailedAlert(error));
+        .catch(() =>
+          ShowWarningAlert("Please check your connection or try again later")
+        );
   };
 
   return (
-    <div className="container-fluid">
+    <div>
       {loggedInUser.role === "owner" && (
         <div className="d-flex flex-row-reverse">
           <button
@@ -97,7 +87,7 @@ export default function Packages() {
               type="button"
               className="btn-close float-end"
               aria-label="Close"
-              onClick={closeView}
+              onClick={() => setViewingPackage(null)}
             ></button>
             <h3>Package Details</h3>
             <p>
@@ -132,7 +122,7 @@ export default function Packages() {
                     <p className="card-text">Price: ${pkg.price}</p>
                     <button
                       className="btn btn-primary"
-                      onClick={() => viewPackage(pkg)}
+                      onClick={() => setViewingPackage(pkg)}
                     >
                       View Package
                     </button>
@@ -181,7 +171,6 @@ export default function Packages() {
                       className="form-control"
                       id="name"
                       placeholder="Name"
-                      value={name}
                       onChange={(e) => setName(e.target.value.trim())}
                     />
                   </div>
@@ -211,7 +200,6 @@ export default function Packages() {
                       className="form-control"
                       placeholder="Description.."
                       id="floatingTextarea2"
-                      value={description}
                       onChange={(e) => setDescription(e.target.value.trim())}
                     ></textarea>
                   </div>
