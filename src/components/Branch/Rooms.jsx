@@ -83,23 +83,6 @@ export default function Rooms() {
                     />
                   </div>
                 </div>
-                <div className="row">
-                  <div className="form-group col-6">
-                    <label htmlFor="branch">
-                      Branch ID<span className="text-danger"> *</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="branch"
-                      value={branch}
-                      onChange={(e) =>
-                        /^\d*$/.test(e.target.value.trim()) &&
-                        setBranch(e.target.value.trim())
-                      }
-                    />
-                  </div>
-                </div>
               </div>
               <div className="modal-footer">
                 <button type="submit" className="btn btn-success">
