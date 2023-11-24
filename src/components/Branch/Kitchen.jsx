@@ -145,7 +145,7 @@ export default function Kitchen() {
                 </tr>
               </thead>
               <tbody>
-                {data.map((product) => (
+                {productsData.map((product) => (
                   <tr key={product.id}>
                     <td>{product.name}</td>
                     <td>
