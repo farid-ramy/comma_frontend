@@ -6,14 +6,13 @@ import { useParams } from "react-router-dom";
 import $ from "jquery";
 export default function Rooms() {
   const [name, setName] = useState("");
-  const [branch, setBranch] = useState("");
   const { url } = useUrl();
   const { branchId } = useParams();
   const [refreshTable, setRefreshTable] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !branch)
+    if (!name)
       return ShowWarningAlert("Fill all the important fields");
 
     axios
