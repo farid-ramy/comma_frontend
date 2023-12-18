@@ -12,5 +12,12 @@ export default function Navbar(props) {
   const navigate = useNavigate();
 
   const [branches, setBranches] = useState([]);
-  
+
+  useEffect(() => {
+    axios(`${url}/branches`)
+      .then((res) => setBranches(res.data))
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  }, [props.reRenderNavbar, url]);
 }
