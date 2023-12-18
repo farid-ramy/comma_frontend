@@ -43,6 +43,25 @@ const Users = () => {
     fetchData();
   }, [refreshTable, url]);
 
+  const handleDeleteBtn = (user) => {
+    const confirmation = window.confirm(
+      `Are you sure you want to delete ${user.first_name} ${user.last_name}?`
+    );
+
+    if (confirmation) {
+      axios
+        .delete(`${url}/users/${user.id}/delete`)
+        .then(() => {
+          setRefreshTable(!refreshTable);
+          ShowSuccessAlert(
+            `${user.first_name} ${user.last_name} was deleted successfully`
+          );
+        })
+        .catch(() => {
+          ShowWarningAlert("Please check your connection or try again later");
+        });
+    }
+  };
 
 
 
