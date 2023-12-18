@@ -19,6 +19,7 @@ export default function CheckedIn(props) {
   const [reload, setReload] = useState(false);
   const [checkedInRecord, setCheckedInRecord] = useState({});
   const [orderedProducts, setOrderedProducts] = useState([]);
+  const [totalTime, SetTotalTime] = useState(0);
 
   useEffect(() => {
     // get all the users data for the search bar
@@ -102,7 +103,7 @@ export default function CheckedIn(props) {
         0
       );
 
-      return totalPayment;
+      return totalPayment + totalTime;
     };
 
     axios
@@ -261,8 +262,8 @@ export default function CheckedIn(props) {
                           2,
                           "0"
                         )}/${date.getFullYear()}`)(
-                        new Date(checkedInRecord.check_in_time)
-                      )}
+                          new Date(checkedInRecord.check_in_time)
+                        )}
                     </div>
                   </div>
 
@@ -305,15 +306,15 @@ export default function CheckedIn(props) {
 
                         let result = "";
                         if (hours > 0) {
-                          result += `${hours} ${
-                            hours === 1 ? "hour" : "hours"
-                          }`;
+                          result += `${hours} ${hours === 1 ? "hour" : "hours"
+                            }`;
                         }
                         if (minutes > 0) {
-                          result += `${
-                            result.length ? " and " : ""
-                          }${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
+                          result += `${result.length ? " and " : ""
+                            }${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
                         }
+
+                        // if (totalTime ===) SetTotalTime(hours*15)
 
                         return result || "0 minutes";
                       })()}
@@ -323,6 +324,10 @@ export default function CheckedIn(props) {
                   <div className="row">
                     <div className="col-12">
                       <p className="h3 mb-4">Receipt:</p>
+                      <div className="d-flex justify-content-between">
+                        <span className="text-capitalize">Time</span>
+                        <span>{totalTime}</span>
+                      </div>
                       {orderedProducts.map((orderedProduct) => (
                         <div
                           key={orderedProduct.product.id}
@@ -349,7 +354,7 @@ export default function CheckedIn(props) {
                             (acc, orderedProduct) =>
                               acc +
                               orderedProduct.quantity *
-                                orderedProduct.product.price,
+                              orderedProduct.product.price,
                             0
                           )
                           .toFixed(2)}

@@ -4,23 +4,24 @@ import axios from "axios";
 import { ShowSuccessAlert, ShowWarningAlert } from "../utilities/toastify";
 import { useUrl } from "../context/UrlProvider";
 
-export default function UsersInfo() {
+const UsersInfo = () => {
   const { url } = useUrl();
   const { userId } = useParams();
   const [reset, setReset] = useState(false);
-  const [reload, setReload] = useState(false);
-
+  const [refresh, setRefresh] = useState(false);
   const [user, setUser] = useState({});
   const [branch, setBranch] = useState({});
   const [history, setHistory] = useState([]);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    job: "",
+    national_id: "",
+    address: "",
+  });
 
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [job, setJob] = useState("");
-  const [national_id, setNationalId] = useState("");
-  const [address, setAddress] = useState("");
 
   useEffect(() => {
     axios(`${url}/users/get/${userId}`)
@@ -32,40 +33,46 @@ export default function UsersInfo() {
       .catch((err) =>
         ShowWarningAlert("Please check your connection or try again later")
       );
-  }, [reload]);
+  }, [refresh, url, userId]);
+
 
   useEffect(() => {
-    setFirstName(user.first_name || "");
-    setLastName(user.last_name || "");
-    setEmail(user.email || "");
-    setPhone(user.phone || "");
-    setJob(user.job || "");
-    setNationalId(user.national_id || "");
-    setAddress(user.address || "");
+    setFormData({
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
+      email: user.email || "",
+      phone: user.phone || "",
+      job: user.job || "",
+      national_id: user.national_id || "",
+      address: user.address || "",
+    });
   }, [user, reset]);
 
-  const handleUpdate = (e) => {
+
+  const handleInputChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value.trim(),
+    }));
+  };
+
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    axios
-      .put(`${url}/users/${user.id}/update`, {
+    try {
+      const res = await axios.put(`${url}/users/${user.id}/update`, {
         role: user.role,
-        first_name,
-        last_name,
-        phone: phone || null,
-        email: email || null,
-        national_id: national_id || null,
-        job: job || null,
-        address: address || null,
-      })
-      .then((res) => {
-        if (!res.data.id)
-          return ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+        ...formData,
+      });
+
+      if (!res.data.id) {
+        ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+      } else {
         ShowSuccessAlert("User updated successfully");
-        setReload(!reload);
-      })
-      .catch(() =>
-        ShowWarningAlert("Please check your connection or try again later")
-      );
+        setRefresh(!refresh);
+      }
+    } catch (error) {
+      ShowWarningAlert("Please check your connection or try again later");
+    }
   };
 
   return (
@@ -132,8 +139,10 @@ export default function UsersInfo() {
                       type="text"
                       className="form-control"
                       id="firstName"
-                      value={first_name}
-                      onChange={(e) => setFirstName(e.target.value.trim())}
+                      value={formData.first_name}
+                      onChange={(e) =>
+                        handleInputChange("first_name", e.target.value)
+                      }
                     />
                   </div>
                   <div className="form-group col-6">
@@ -142,8 +151,10 @@ export default function UsersInfo() {
                       type="text"
                       className="form-control"
                       id="lastName"
-                      value={last_name}
-                      onChange={(e) => setLastName(e.target.value.trim())}
+                      value={formData.last_name}
+                      onChange={(e) =>
+                        handleInputChange("last_name", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -154,8 +165,10 @@ export default function UsersInfo() {
                       type="email"
                       className="form-control"
                       id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value.trim())}
+                      value={formData.email}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                     />
                   </div>
                   <div className="form-group col-6">
@@ -164,11 +177,12 @@ export default function UsersInfo() {
                       type="text"
                       className="form-control"
                       id="phone"
-                      value={phone}
-                      onChange={(e) =>
-                        /^\d*$/.test(e.target.value.trim()) &&
-                        setPhone(e.target.value.trim())
-                      }
+                      value={formData.phone}
+                      onChange={(e) => {
+                        const trimmedValue = e.target.value.trim();
+                        /^\d*$/.test(trimmedValue) &&
+                          handleInputChange("phone", trimmedValue);
+                      }}
                     />
                   </div>
                 </div>
@@ -179,8 +193,8 @@ export default function UsersInfo() {
                       type="text"
                       className="form-control"
                       id="job"
-                      value={job}
-                      onChange={(e) => setJob(e.target.value.trim())}
+                      value={formData.job}
+                      onChange={(e) => handleInputChange("job", e.target.value)}
                     />
                   </div>
                   <div className="form-group col-6">
@@ -189,11 +203,12 @@ export default function UsersInfo() {
                       type="text"
                       className="form-control"
                       id="nationalId"
-                      value={national_id}
-                      onChange={(e) =>
-                        /^\d*$/.test(e.target.value.trim()) &&
-                        setNationalId(e.target.value.trim())
-                      }
+                      value={formData.national_id}
+                      onChange={(e) => {
+                        const trimmedValue = e.target.value.trim();
+                        /^\d*$/.test(trimmedValue) &&
+                          handleInputChange("national_id", trimmedValue);
+                      }}
                     />
                   </div>
                 </div>
@@ -204,8 +219,10 @@ export default function UsersInfo() {
                       type="text"
                       className="form-control"
                       id="address"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value.trim())}
+                      value={formData.address}
+                      onChange={(e) =>
+                        handleInputChange("address", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -254,9 +271,7 @@ export default function UsersInfo() {
                       {history.map((h, index) => {
                         const checkInTime = new Date(h.check_in_time);
                         const checkOutTime = new Date(
-                          h.check_out_time != null
-                            ? h.check_out_time
-                            : h.check_in_time
+                          h.check_out_time ?? h.check_in_time
                         );
 
                         const timeDifference = new Date(
@@ -270,10 +285,10 @@ export default function UsersInfo() {
                         const formattedTimeDifference = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
+                            .toString()
+                            .padStart(2, "0")}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
 
                         return (
                           <tr key={index}>
@@ -281,7 +296,7 @@ export default function UsersInfo() {
                             <td>{checkInTime.toLocaleString()}</td>
                             <td>
                               {checkOutTime.toLocaleString() ===
-                              checkInTime.toLocaleString()
+                                checkInTime.toLocaleString()
                                 ? "-"
                                 : checkOutTime.toLocaleString()}
                             </td>
@@ -302,4 +317,8 @@ export default function UsersInfo() {
       </div>
     </div>
   );
+
+
 }
+export default UsersInfo;
+

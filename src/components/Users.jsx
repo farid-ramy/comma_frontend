@@ -7,95 +7,104 @@ import { ShowSuccessAlert, ShowWarningAlert } from "../utilities/toastify";
 import $ from "jquery";
 import "datatables.net";
 
-export default function Users() {
+const Users = () => {
   const { loggedInUser } = useAuth();
   const { url } = useUrl();
 
   const [refreshTable, setRefreshTable] = useState(false);
-
   const [usersData, setUsersData] = useState([]);
-
   const [role, setRole] = useState("client");
-  const [username, setUserName] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [first_name, setFirstName] = useState(null);
-  const [last_name, setLastName] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [phone, setPhone] = useState(null);
-  const [job, setJob] = useState(null);
-  const [national_id, setNationalId] = useState(null);
-  const [address, setAddress] = useState(null);
+  const [formData, setFormData] = useState({
+    username: null,
+    password: null,
+    first_name: null,
+    last_name: null,
+    email: null,
+    phone: null,
+    job: null,
+    national_id: null,
+    address: null,
+  });
 
   useEffect(() => {
-    axios(`${url}/users/get?role=client`)
-      .then((res) => {
-        if ($.fn.dataTable.isDataTable("#dataTable"))
+    const fetchData = async () => {
+      try {
+        const res = await axios(`${url}/users/get?role=client`);
+        if ($.fn.dataTable.isDataTable("#dataTable")) {
           $("#dataTable").DataTable().destroy();
+        }
         setUsersData(res.data);
-      })
-      .then(() => {
-        setTimeout(() => $("#dataTable").DataTable(), 10);
-      })
-      .catch(() =>
-        ShowWarningAlert("Please check your connection or try again later")
-      );
-  }, [refreshTable]);
+        setTimeout(() => $("#dataTable").DataTable(), 0);
+      } catch (error) {
+        ShowWarningAlert("Please check your connection or try again later");
+      }
+    };
+
+    fetchData();
+  }, [refreshTable, url]);
 
   const handleDeleteBtn = (user) => {
-    if (
-      window.confirm(
-        `Are you should you want to delete ${user.first_name} ${user.last_name} ?`
-      )
-    )
+    const confirmation = window.confirm(
+      `Are you sure you want to delete ${user.first_name} ${user.last_name}?`
+    );
+
+    if (confirmation) {
       axios
         .delete(`${url}/users/${user.id}/delete`)
         .then(() => {
           setRefreshTable(!refreshTable);
           ShowSuccessAlert(
-            `${user.first_name + " " + user.last_name} was deleted successfully`
+            `${user.first_name} ${user.last_name} was deleted successfully`
           );
         })
-        .catch(() =>
-          ShowWarningAlert("Please check your connection or try again later")
-        );
+        .catch(() => {
+          ShowWarningAlert("Please check your connection or try again later");
+        });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!first_name || !last_name)
+
+    const requiredFields = ["first_name", "last_name"];
+    const hasEmptyRequiredFields = requiredFields.some(
+      (field) => !formData[field]
+    );
+
+    if (hasEmptyRequiredFields) {
       return ShowWarningAlert("Fill all the important fields");
-    else if (role === "client") {
-      setUserName(null);
-      setPassword(null);
-    } else if ((username && !password) || (!username && password))
+    }
+
+    if (role === "client") {
+      setFormData({ ...formData, username: null, password: null });
+    } else if (!formData.username || !formData.password) {
       return ShowWarningAlert("Fill both username and password");
+    }
 
     axios
       .post(`${url}/users/create`, {
         role,
-        first_name,
-        last_name,
-        username: username || null,
-        password: password || null,
-        phone: phone || null,
-        email: email || null,
-        national_id: national_id || null,
-        job: job || null,
-        address: address || null,
-        branch: loggedInUser.role === "owner" ? null : loggedInUser.branch.id,
+        ...formData,
+        branch: loggedInUser.branch.id,
         created_by: loggedInUser.id,
       })
       .then((res) => {
-        if (!res.data.id)
+        if (!res.data.id) {
           return ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+        }
+
         ShowSuccessAlert("User added successfully");
         setRefreshTable(!refreshTable);
         $("#exampleModal").modal("hide");
         $("#myForm")[0].reset();
       })
-      .catch(() =>
-        ShowWarningAlert("Please check your connection or try again later")
-      );
+      .catch(() => {
+        ShowWarningAlert("Please check your connection or try again later");
+      });
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value.trim() });
   };
 
   return (
@@ -145,7 +154,7 @@ export default function Users() {
                       </Link>
                     </td>
                     <td>
-                      {user.phone ? "*****" + user.phone.slice(-4) : "-"}
+                      {user.phone ? `*****${user.phone.slice(-4)}` : "-"}
                       <span className="d-none">{user.phone}</span>
                     </td>
                     <td>
@@ -154,11 +163,11 @@ export default function Users() {
                     </td>
                     <td>{user.role}</td>
                     <td>
-                      {user.job ? user.job.slice(0, 5) + "..." : "-"}
+                      {user.job ? `${user.job.slice(0, 5)}...` : "-"}
                       <span className="d-none">{user.job}</span>
                     </td>
                     <td>
-                      {user.address ? user.address.slice(0) + ".." : "-"}
+                      {user.address ? `${user.address.slice(0)}..` : "-"}
                       <span className="d-none">{user.address}</span>
                     </td>
                     <td>
@@ -238,7 +247,9 @@ export default function Users() {
                         type="text"
                         className="form-control"
                         id="userName"
-                        onChange={(e) => setUserName(e.target.value.trim())}
+                        onChange={(e) =>
+                          handleInputChange("username", e.target.value)
+                        }
                       />
                     </div>
                     <div className="form-group col-6">
@@ -247,7 +258,9 @@ export default function Users() {
                         type="text"
                         className="form-control"
                         id="password"
-                        onChange={(e) => setPassword(e.target.value.trim())}
+                        onChange={(e) =>
+                          handleInputChange("password", e.target.value)
+                        }
                       />
                     </div>
                   </div>
@@ -262,7 +275,9 @@ export default function Users() {
                       type="text"
                       className="form-control"
                       id="firstName"
-                      onChange={(e) => setFirstName(e.target.value.trim())}
+                      onChange={(e) =>
+                        handleInputChange("first_name", e.target.value)
+                      }
                     />
                   </div>
                   <div className="form-group col-6">
@@ -274,7 +289,9 @@ export default function Users() {
                       type="text"
                       className="form-control"
                       id="lastName"
-                      onChange={(e) => setLastName(e.target.value.trim())}
+                      onChange={(e) =>
+                        handleInputChange("last_name", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -285,7 +302,9 @@ export default function Users() {
                       type="email"
                       className="form-control"
                       id="email"
-                      onChange={(e) => setEmail(e.target.value.trim())}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                     />
                   </div>
                   <div className="form-group col-6">
@@ -294,10 +313,10 @@ export default function Users() {
                       type="text"
                       className="form-control"
                       id="phone"
-                      value={phone || ""}
+                      value={formData.phone || ""}
                       onChange={(e) =>
                         /^\d*$/.test(e.target.value.trim()) &&
-                        setPhone(e.target.value.trim())
+                        handleInputChange("phone", e.target.value)
                       }
                     />
                   </div>
@@ -309,7 +328,7 @@ export default function Users() {
                       type="text"
                       className="form-control"
                       id="job"
-                      onChange={(e) => setJob(e.target.value.trim())}
+                      onChange={(e) => handleInputChange("job", e.target.value)}
                     />
                   </div>
                   <div className="form-group col-6">
@@ -318,10 +337,10 @@ export default function Users() {
                       type="text"
                       className="form-control"
                       id="nationalId"
-                      value={national_id || ""}
+                      value={formData.national_id || ""}
                       onChange={(e) =>
                         /^\d*$/.test(e.target.value.trim()) &&
-                        setNationalId(e.target.value.trim())
+                        handleInputChange("national_id", e.target.value)
                       }
                     />
                   </div>
@@ -333,11 +352,14 @@ export default function Users() {
                       type="text"
                       className="form-control"
                       id="address"
-                      onChange={(e) => setAddress(e.target.value.trim())}
+                      onChange={(e) =>
+                        handleInputChange("address", e.target.value)
+                      }
                     />
                   </div>
                 </div>
               </div>
+
               <div className="modal-footer">
                 <button type="submit" className="btn btn-success">
                   Add
@@ -350,7 +372,7 @@ export default function Users() {
                   }}
                   className="btn btn-secondary"
                 >
-                  cancel
+                  Cancel
                 </button>
               </div>
             </form>
@@ -359,4 +381,6 @@ export default function Users() {
       </div>
     </div>
   );
-}
+};
+
+export default Users;
