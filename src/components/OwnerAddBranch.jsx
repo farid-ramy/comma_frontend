@@ -172,7 +172,5 @@ const AddBranch = (props) => {
       </div>
     </div>
   );
-
-
-
 };
+export default AddBranch;
