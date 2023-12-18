@@ -55,5 +55,77 @@ export default function CheckedIn(props) {
   }, [reload]);
 
 
+  const handleChange = async (value) => {
+    setInput(value);
+    if (value) {
+      const results = usersData.filter((user) => {
+        const isNotCheckedIn = !checkedInUsers.some(
+          (checkedUser) => checkedUser.client.id === user.id
+        );
+
+        return (
+          isNotCheckedIn &&
+          (user.id.toString()?.toLowerCase()?.includes(value) ||
+            user.first_name?.toLowerCase()?.includes(value) ||
+            user.last_name?.toLowerCase()?.includes(value) ||
+            user.phone?.toLowerCase()?.includes(value) ||
+            user.national_id?.toLowerCase()?.includes(value))
+        );
+      });
+      setResults(results);
+    } else {
+      setResults([]);
+    }
+  };
+
+
+  const handleStart = (user) => {
+    axios
+      .post(`${url}/history/create`, {
+        client: user.id,
+        employee: loggedInUser.id,
+        branch: loggedInUser.branch.id,
+      })
+      .then((res) => {
+        if (res.data.error) {
+          return ShowWarningAlert(res.data.error);
+        }
+        handleChange("");
+        setReload(!reload);
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  };
+
+
+  const handleCheckOutBtn = (e) => {
+    e.preventDefault();
+    const payment = () => {
+      const totalPayment = orderedProducts.reduce(
+        (acc, orderedProduct) =>
+          acc + orderedProduct.quantity * orderedProduct.product.price,
+        0
+      );
+
+      return totalPayment + totalTime;
+    };
+
+    axios
+      .put(`${url}/history/${checkedInRecord.id}/update`, {
+        check_out_time: new Date().toISOString(),
+        payment: payment(),
+      })
+      .then((res) => {
+        if (res.error) ShowWarningAlert(res.error);
+        setReload(!reload);
+        $("#exampleModal").modal("hide");
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  };
+
+
 
 }
