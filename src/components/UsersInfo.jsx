@@ -56,4 +56,23 @@ const UsersInfo = () => {
     }));
   };
 
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(`${url}/users/${user.id}/update`, {
+        role: user.role,
+        ...formData,
+      });
+
+      if (!res.data.id) {
+        ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+      } else {
+        ShowSuccessAlert("User updated successfully");
+        setRefresh(!refresh);
+      }
+    } catch (error) {
+      ShowWarningAlert("Please check your connection or try again later");
+    }
+  };
+
 }
