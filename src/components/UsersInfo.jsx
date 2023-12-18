@@ -23,5 +23,37 @@ const UsersInfo = () => {
   });
 
 
+  useEffect(() => {
+    axios(`${url}/users/get/${userId}`)
+      .then((res) => {
+        setUser(res.data);
+        setBranch(res.data.branch);
+        setHistory(res.data.history);
+      })
+      .catch((err) =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  }, [refresh, url, userId]);
+
+
+  useEffect(() => {
+    setFormData({
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
+      email: user.email || "",
+      phone: user.phone || "",
+      job: user.job || "",
+      national_id: user.national_id || "",
+      address: user.address || "",
+    });
+  }, [user, reset]);
+
+
+  const handleInputChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value.trim(),
+    }));
+  };
 
 }
