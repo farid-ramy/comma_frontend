@@ -82,5 +82,97 @@ const AddBranch = (props) => {
   };
 
 
+  return (
+    <div className="container-fluid">
+      <div className="card shadow mb-4">
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3 col-3">
+              <label htmlFor="branchName" className="form-label">
+                Name <span className="text-danger"> *</span>
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="branchName"
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+              />
+            </div>
+            <div className="mb-3 col-4">
+              <label htmlFor="branchAddress" className="form-label">
+                Address
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="branchAddress"
+                value={formData.address}
+                onChange={(e) => handleInputChange("address", e.target.value)}
+              />
+            </div>
+            <div className="mb-3 col-3">
+              <label htmlFor="phone">Phone</label>
+              <input
+                type="text"
+                pattern="[0-9]*"
+                className="form-control"
+                id="phone"
+                value={formData.phone}
+                onChange={(e) => {
+                  if (/^\d*$/.test(e.target.value.trim())) {
+                    handleInputChange("phone", e.target.value.trim());
+                  }
+                }}
+              />
+            </div>
+            <div className="mb-3 col-3">
+              <label htmlFor="workingEmployee">Working employee</label>
+              <select
+                id="workingEmployee"
+                className="form-select"
+                onChange={(e) =>
+                  handleInputChange(
+                    "workingEmployee",
+                    JSON.parse(e.target.value)
+                  )
+                }
+              >
+                <option value={JSON.stringify({})}>None</option>
+                {employees.map((employee) => (
+                  <option value={JSON.stringify(employee)} key={employee.id}>
+                    {employee.first_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-3">
+              <div className="col-4 d-flex justify-content-between">
+                <button type="submit" className="btn btn-success">
+                  Add
+                </button>
+                <button
+                  type="reset"
+                  className="btn btn-secondary"
+                  onClick={() =>
+                    setFormData({
+                      name: "",
+                      address: "",
+                      phone: "",
+                      workingEmployee: null,
+                    })
+                  }
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+
+
 
 };
