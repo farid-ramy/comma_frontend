@@ -38,4 +38,22 @@ export default function CheckedIn(props) {
       );
   }, []);
 
+  useEffect(() => {
+    // get all the user that are checkined in the branch and not check out
+    axios(
+      `${url}/history?branch_id=${loggedInUser.branch.id}&check_out_time=null`
+    )
+      .then((res) => {
+        if ($.fn.dataTable.isDataTable("#dataTable"))
+          $("#dataTable").DataTable().destroy();
+        setcheckedInUsers(res.data);
+      })
+      .then(() => setTimeout(() => $("#dataTable").DataTable(), 10))
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  }, [reload]);
+
+
+
 }
