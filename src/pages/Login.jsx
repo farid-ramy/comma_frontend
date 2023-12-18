@@ -18,10 +18,36 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const handleInputChange = (e, setValue) => setValue(e.target.value.trim());
 
-  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setEye(!eye);
     const passwordInput = document.getElementById("exampleInputPassword");
     passwordInput.type = eye ? "text" : "password";
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!username || !password) {
+      return ShowWarningAlert("Please fill in all the fields");
+    }
+
+    try {
+      const res = await axios.post(`${url}/users/login`, {
+        username,
+        password,
+      });
+
+      if (res.data.error) {
+        ShowFailedAlert(res.data.error);
+      } else {
+        setLoggedInUser(res.data);
+        localStorage.setItem("loggedInUser", JSON.stringify(res.data));
+
+        // Navigate to the appropriate role-based page
+        navigate(`/${res.data.role}`);
+      }
+    } catch (error) {
+      ShowWarningAlert("Please check your connection or try again later");
+    }
   };
 }
