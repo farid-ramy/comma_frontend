@@ -104,6 +104,286 @@ const Users = () => {
       });
   };
 
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value.trim() });
+  };
+
+
+  return (
+    <div>
+      <div className="d-flex flex-row-reverse">
+        <button
+          type="button"
+          className="btn btn-secondary mb-3"
+          data-toggle="modal"
+          data-target="#exampleModal"
+        >
+          + Add User
+        </button>
+      </div>
+      <div className="card shadow mb-4">
+        <div className="card-body">
+          <div className="table-responsive">
+            <table
+              className="table table-bordered"
+              id="dataTable"
+              width="100%"
+              cellSpacing="0"
+            >
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Job</th>
+                  <th>Address</th>
+                  <th>National id</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {usersData.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Link
+                        className="text-dark"
+                        to={`../user_info/${user.id}`}
+                      >
+                        {user.first_name} {user.last_name}
+                      </Link>
+                    </td>
+                    <td>
+                      {user.phone ? `*****${user.phone.slice(-4)}` : "-"}
+                      <span className="d-none">{user.phone}</span>
+                    </td>
+                    <td>
+                      {user.email ? "***" : "-"}
+                      <span className="d-none">{user.email}</span>
+                    </td>
+                    <td>{user.role}</td>
+                    <td>
+                      {user.job ? `${user.job.slice(0, 5)}...` : "-"}
+                      <span className="d-none">{user.job}</span>
+                    </td>
+                    <td>
+                      {user.address ? `${user.address.slice(0)}..` : "-"}
+                      <span className="d-none">{user.address}</span>
+                    </td>
+                    <td>
+                      {user.national_id ? "***" : "-"}
+                      <span className="d-none">{user.national_id}</span>
+                    </td>
+                    <td>
+                      <button
+                        className="text-danger border-0 bg-color bg-transparent"
+                        onClick={() => handleDeleteBtn(user)}
+                      >
+                        <i className="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div
+        className="modal fade"
+        id="exampleModal"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                Add new User
+              </h5>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} id="myForm">
+              <div className="modal-body">
+                <div className="row">
+                  <div className="form-group col-4">
+                    <label htmlFor="role">Role</label>
+                    <select
+                      id="role"
+                      value={role}
+                      className="form-select"
+                      onChange={(e) => setRole(e.target.value.trim())}
+                    >
+                      {["client", "admin", "manager"]
+                        .filter((role) => {
+                          return (
+                            role !== "owner" &&
+                            loggedInUser.role !== role &&
+                            (loggedInUser.role !== "admin" || role === "client")
+                          );
+                        })
+                        .map((role) => (
+                          <option value={role} key={role}>
+                            {role}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                </div>
+                {role !== "client" && (
+                  <div className="row">
+                    <div className="form-group col-6">
+                      <label htmlFor="userName">Username</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="userName"
+                        onChange={(e) =>
+                          handleInputChange("username", e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="form-group col-6">
+                      <label htmlFor="password">Password</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="password"
+                        onChange={(e) =>
+                          handleInputChange("password", e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+                <div className="row">
+                  <div className="form-group col-6">
+                    <label htmlFor="firstName">
+                      First Name
+                      <span className="text-danger"> * </span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="firstName"
+                      onChange={(e) =>
+                        handleInputChange("first_name", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="form-group col-6">
+                    <label htmlFor="lastName">
+                      Last Name
+                      <span className="text-danger"> * </span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="lastName"
+                      onChange={(e) =>
+                        handleInputChange("last_name", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="form-group col-6">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="form-group col-6">
+                    <label htmlFor="phone">Phone</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="phone"
+                      value={formData.phone || ""}
+                      onChange={(e) =>
+                        /^\d*$/.test(e.target.value.trim()) &&
+                        handleInputChange("phone", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="form-group col-6">
+                    <label htmlFor="job">Job</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="job"
+                      onChange={(e) => handleInputChange("job", e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group col-6">
+                    <label htmlFor="nationalId">National id</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="nationalId"
+                      value={formData.national_id || ""}
+                      onChange={(e) =>
+                        /^\d*$/.test(e.target.value.trim()) &&
+                        handleInputChange("national_id", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="form-group">
+                    <label htmlFor="address">Address</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="address"
+                      onChange={(e) =>
+                        handleInputChange("address", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button type="submit" className="btn btn-success">
+                  Add
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    $("#exampleModal").modal("hide");
+                    $("#myForm")[0].reset();
+                  }}
+                  className="btn btn-secondary"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
 
 
 }
