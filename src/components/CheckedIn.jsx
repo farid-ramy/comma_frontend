@@ -21,8 +21,6 @@ export default function CheckedIn(props) {
   const [orderedProducts, setOrderedProducts] = useState([]);
   const [totalTime, SetTotalTime] = useState(0);
 
-
-
   useEffect(() => {
     // get all the users data for the search bar
     axios(`${url}/users/get?role=client`)
@@ -54,7 +52,6 @@ export default function CheckedIn(props) {
       );
   }, [reload]);
 
-
   const handleChange = async (value) => {
     setInput(value);
     if (value) {
@@ -78,7 +75,6 @@ export default function CheckedIn(props) {
     }
   };
 
-
   const handleStart = (user) => {
     axios
       .post(`${url}/history/create`, {
@@ -97,7 +93,6 @@ export default function CheckedIn(props) {
         ShowWarningAlert("Please check your connection or try again later")
       );
   };
-
 
   const handleCheckOutBtn = (e) => {
     e.preventDefault();
@@ -125,7 +120,6 @@ export default function CheckedIn(props) {
         ShowWarningAlert("Please check your connection or try again later")
       );
   };
-
 
   const handleDeleteBtn = (checkedInRecord) => {
     if (
