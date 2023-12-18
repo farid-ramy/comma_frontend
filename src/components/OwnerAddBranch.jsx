@@ -29,6 +29,12 @@ const AddBranch = (props) => {
   }, [url]);
 
 
+  const handleInputChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
 
 
 
