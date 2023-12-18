@@ -64,5 +64,46 @@ const Users = () => {
   };
 
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const requiredFields = ["first_name", "last_name"];
+    const hasEmptyRequiredFields = requiredFields.some(
+      (field) => !formData[field]
+    );
+
+    if (hasEmptyRequiredFields) {
+      return ShowWarningAlert("Fill all the important fields");
+    }
+
+    if (role === "client") {
+      setFormData({ ...formData, username: null, password: null });
+    } else if (!formData.username || !formData.password) {
+      return ShowWarningAlert("Fill both username and password");
+    }
+
+    axios
+      .post(`${url}/users/create`, {
+        role,
+        ...formData,
+        branch: loggedInUser.branch.id,
+        created_by: loggedInUser.id,
+      })
+      .then((res) => {
+        if (!res.data.id) {
+          return ShowWarningAlert(res.data[Object.keys(res.data)[0]][0]);
+        }
+
+        ShowSuccessAlert("User added successfully");
+        setRefreshTable(!refreshTable);
+        $("#exampleModal").modal("hide");
+        $("#myForm")[0].reset();
+      })
+      .catch(() => {
+        ShowWarningAlert("Please check your connection or try again later");
+      });
+  };
+
+
 
 }
