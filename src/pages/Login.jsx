@@ -11,5 +11,11 @@ const Login = () => {
   const { setLoggedInUser } = useAuth();
   const { url } = useUrl();
   const navigate = useNavigate();
-  
+
+  // State variables
+  const [eye, setEye] = useState(true);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const handleInputChange = (e, setValue) => setValue(e.target.value.trim());
+
 }
