@@ -22,4 +22,20 @@ export default function CheckedIn(props) {
   const [totalTime, SetTotalTime] = useState(0);
 
 
+
+  useEffect(() => {
+    // get all the users data for the search bar
+    axios(`${url}/users/get?role=client`)
+      .then((res) => setUsersData(res.data))
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+    // get all the products in the branch
+    axios(`${url}/products?branch_id=${loggedInUser.branch.id}`)
+      .then((res) => setProducts(res.data))
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  }, []);
+
 }
