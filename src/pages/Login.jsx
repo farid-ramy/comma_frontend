@@ -18,4 +18,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const handleInputChange = (e, setValue) => setValue(e.target.value.trim());
 
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setEye(!eye);
+    const passwordInput = document.getElementById("exampleInputPassword");
+    passwordInput.type = eye ? "text" : "password";
+  };
 }
