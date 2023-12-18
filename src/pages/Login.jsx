@@ -5,39 +5,53 @@ import { useUrl } from "../context/UrlProvider";
 import axios from "axios";
 import { ShowFailedAlert, ShowWarningAlert } from "../utilities/toastify";
 
-export default function Login() {
+const Login = () => {
+
+  // Hooks and context
   const { setLoggedInUser } = useAuth();
   const { url } = useUrl();
   const navigate = useNavigate();
 
+  // State variables
   const [eye, setEye] = useState(true);
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const handleInputChange = (e, setValue) => setValue(e.target.value.trim());
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!username || !password)
-      return ShowWarningAlert("Please fill all the fields");
-
-    axios
-      .post(`${url}/users/login`, {
-        username,
-        password,
-      })
-      .then((res) => {
-        if (res.data.error) return ShowFailedAlert(res.data.error);
-        else {
-          setLoggedInUser(res.data);
-          localStorage.setItem("loggedInUser", JSON.stringify(res.data));
-          navigate(`/${res.data.role}`);
-        }
-      })
-      .catch(() =>
-        ShowWarningAlert("Please check your connection or try again later")
-      );
+  const togglePasswordVisibility = () => {
+    setEye(!eye);
+    const passwordInput = document.getElementById("exampleInputPassword");
+    passwordInput.type = eye ? "text" : "password";
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!username || !password) {
+      return ShowWarningAlert("Please fill in all the fields");
+    }
+
+    try {
+      const res = await axios.post(`${url}/users/login`, {
+        username,
+        password,
+      });
+
+      if (res.data.error) {
+        ShowFailedAlert(res.data.error);
+      } else {
+        setLoggedInUser(res.data);
+        localStorage.setItem("loggedInUser", JSON.stringify(res.data));
+
+        // Navigate to the appropriate role-based page
+        navigate(`/${res.data.role}`);
+      }
+    } catch (error) {
+      ShowWarningAlert("Please check your connection or try again later");
+    }
+  };
+
+  // JSX for the login component
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -47,14 +61,14 @@ export default function Login() {
               <div className="row">
                 <div className="col-lg-6 d-none d-lg-block bg-login-image"></div>
                 <div className="col-lg-6">
-                  <br />
-                  <br />
                   <div className="p-5">
                     <div className="text-center">
+                      <br />
                       <h1 className="h3 text-gray-900 mb-4">Welcome Back!</h1>
+                      <br />
+                      <br />
+                      <br />
                     </div>
-                    <br />
-                    <br />
                     <form className="user" onSubmit={handleSubmit}>
                       <div className="form-group">
                         <input
@@ -62,16 +76,16 @@ export default function Login() {
                           className="form-control form-control-user"
                           id="exampleInputUsername"
                           placeholder="Enter your Username..."
-                          onChange={(e) => setUsername(e.target.value.trim())}
+                          onChange={(e) => handleInputChange(e, setUsername)}
                         />
                       </div>
                       <div className="form-group position-relative">
                         <input
-                          type="password"
+                          type={eye ? "password" : "text"}
                           className="form-control form-control-user"
                           id="exampleInputPassword"
                           placeholder="Password"
-                          onChange={(e) => setPassword(e.target.value.trim())}
+                          onChange={(e) => handleInputChange(e, setPassword)}
                         />
                         <i
                           className={`fa-solid position-absolute ${
@@ -82,15 +96,7 @@ export default function Login() {
                             top: "40%",
                             cursor: "pointer",
                           }}
-                          onClick={() => {
-                            setEye(!eye);
-                            const passwordInput = document.getElementById(
-                              "exampleInputPassword"
-                            );
-                            if (passwordInput.type === "password")
-                              passwordInput.type = "text";
-                            else passwordInput.type = "password";
-                          }}
+                          onClick={togglePasswordVisibility}
                         ></i>
                       </div>
                       <br />
@@ -99,9 +105,9 @@ export default function Login() {
                       <button className="btn btn-warning btn-user btn-block">
                         Login
                       </button>
+                      <br />
+                      <br />
                     </form>
-                    <br />
-                    <br />
                   </div>
                 </div>
               </div>
@@ -111,4 +117,6 @@ export default function Login() {
       </div>
     </div>
   );
-}
+};
+
+export default Login;

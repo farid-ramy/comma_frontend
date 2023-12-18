@@ -15,47 +15,55 @@ export default function Navbar(props) {
 
   useEffect(() => {
     axios(`${url}/branches`)
-      .then((res) => {
-        setBranches(res.data);
-      })
+      .then((res) => setBranches(res.data))
       .catch(() =>
         ShowWarningAlert("Please check your connection or try again later")
       );
-  }, [props.reRenderNavbar]);
+  }, [props.reRenderNavbar, url]);
 
   return (
     <div id="wrapper">
+      {/* Sidebar */}
       <ul
         className="navbar-nav bg-gradient-warning sidebar sidebar-dark accordion"
         id="accordionSidebar"
       >
+        {/* Sidebar - Brand */}
         <div className="sidebar-brand d-flex align-items-center justify-content-center">
           Comma
         </div>
         <hr className="sidebar-divider my-0" />
-        {loggedInUser.role === "owner" || loggedInUser.role === "manager" ? (
+
+        {/* Dashboard Link */}
+        {(loggedInUser.role === "owner" || loggedInUser.role === "manager") && (
           <li className="nav-item">
             <Link className="nav-link" to="./dashboard">
               <i className="fas fa-fw fa-tachometer-alt"></i>
               <span>Dashboard</span>
             </Link>
           </li>
-        ) : null}
-        {loggedInUser.role === "manager" || loggedInUser.role === "admin" ? (
+        )}
+
+        {/* Checked In Link */}
+        {(loggedInUser.role === "manager" || loggedInUser.role === "admin") && (
           <li className="nav-item">
             <Link className="nav-link" to="./checkedIn">
               <i className="fa-solid fa-check"></i>
               <span>Checked in</span>
             </Link>
           </li>
-        ) : null}
+        )}
+
+        {/* Users Link */}
         <li className="nav-item">
           <Link className="nav-link" to="./users">
             <i className="fa-solid fa-users"></i>
             <span>Users</span>
           </Link>
         </li>
-        {loggedInUser.role === "owner" ? (
+
+        {/* Branches Section */}
+        {(loggedInUser.role === "owner" && (
           <li className="nav-item">
             <span
               className="nav-link collapsed"
@@ -78,7 +86,8 @@ export default function Navbar(props) {
                   + Add
                 </Link>
 
-                {branches.length > 0 ? (
+                {/* Render current branches if available */}
+                {branches.length > 0 && (
                   <div>
                     <h6 className="collapse-header">current branches:</h6>
                     {branches.map((branch) => (
@@ -91,25 +100,29 @@ export default function Navbar(props) {
                       </Link>
                     ))}
                   </div>
-                ) : null}
+                )}
               </div>
             </div>
           </li>
-        ) : loggedInUser.branch ? (
-          <li className="nav-item">
-            <Link
-              className="nav-link"
-              to={`./branch/${loggedInUser.branch.id}`}
-            >
-              <i className="fa-solid fa-building"></i>
-              <span>Branch</span>
-            </Link>
-          </li>
-        ) : null}
+        )) || (
+            <li className="nav-item">
+              <Link
+                className="nav-link"
+                to={`./branch/${loggedInUser.branch.id}`}
+              >
+                <i className="fa-solid fa-building"></i>
+                <span>Branch</span>
+              </Link>
+            </li>
+          )}
       </ul>
+
+      {/* Main Content */}
       <div id="content-wrapper" className="d-flex flex-column">
         <div id="content">
-          <nav className="navbar navbar-expand navbar-light bg-black topbar mb-4 static-top shadow">
+          {/* Top Navbar */}
+          <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            {/* Right-aligned User Dropdown */}
             <ul className="navbar-nav ml-auto">
               <li className="nav-item dropdown no-arrow">
                 <span
@@ -120,7 +133,7 @@ export default function Navbar(props) {
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  <span className="mr-2 d-none d-lg-inline text-white-600 small">
+                  <span className="mr-2 d-none d-lg-inline text-gray-600 small">
                     {loggedInUser.first_name} {loggedInUser.last_name}
                   </span>
                   <img
@@ -129,6 +142,7 @@ export default function Navbar(props) {
                     alt="profile pic"
                   />
                 </span>
+                {/* User Dropdown Menu */}
                 <div
                   className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                   aria-labelledby="userDropdown"
@@ -137,6 +151,7 @@ export default function Navbar(props) {
                     <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                     Settings
                   </Link>
+                  {/* Logout Button */}
                   <button
                     className="dropdown-item"
                     onClick={() => {
@@ -151,10 +166,15 @@ export default function Navbar(props) {
               </li>
             </ul>
           </nav>
+
+          {/* Main Content Container */}
           <div className="container-fluid mb-5">
+            {/* Outlet for rendering child routes */}
             <Outlet />
           </div>
         </div>
+
+        {/* Footer */}
         <footer className="sticky-footer bg-white">
           <div className="container my-auto">
             <div className="copyright text-center my-auto">
