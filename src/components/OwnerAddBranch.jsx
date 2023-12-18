@@ -15,6 +15,20 @@ const AddBranch = (props) => {
   });
 
 
+  useEffect(() => {
+    axios(`${url}/users/get`)
+      .then((res) => {
+        const filteredEmployees = res.data.filter(
+          (user) => user.role === "admin" || user.role === "manager"
+        );
+        setEmployees(filteredEmployees);
+      })
+      .catch(() =>
+        ShowWarningAlert("Please check your connection or try again later")
+      );
+  }, [url]);
+
+
 
 
 
