@@ -63,7 +63,6 @@ const Users = () => {
     }
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -107,7 +106,6 @@ const Users = () => {
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value.trim() });
   };
-
 
   return (
     <div>
@@ -383,7 +381,6 @@ const Users = () => {
       </div>
     </div>
   );
+};
 
-
-
-}
+export default Users;
